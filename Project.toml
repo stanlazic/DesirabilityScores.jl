@@ -1,0 +1,13 @@
+name = "DesirabilityScores"
+uuid = "4c2d0946-a3d2-4bb8-8258-3a09d0d24184"
+authors = ["Stanley E. Lazic"]
+version = "0.1.0"
+
+[compat]
+julia = "1.6"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
