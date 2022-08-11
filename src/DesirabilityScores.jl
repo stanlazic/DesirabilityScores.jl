@@ -7,7 +7,7 @@ export d_high
 export d_low
 # export d_overall
 # export d_rank
-# __Gabe testing__ 
+# __Gabe testing__
 
 
 """
@@ -73,7 +73,7 @@ end
 
     - `scale`: Controls how steeply the function increases or decreases.
 """
-function d_central(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
+function d_central(x; cut1, cut2, cut3, cut4, des_min = 0, des_max = 1, scale = 1)
     @assert cut1 < cut2 "cut1 must be less than cut2"
     @assert cut2 < cut3 "cut2 must be less than cut3"
     @assert cut3 < cut4 "cut3 must be less than cut4"
@@ -82,9 +82,9 @@ function d_central(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 
     @assert scale > 0 "scale must be greater than zero"
 
     # vector to hold results
-    y = similar(x, Union{Float64, Missing})
+    y = similar(x, Union{Float64,Missing})
 
-    for i in 1:size(x, 1)
+    for i = 1:size(x, 1)
         if ismissing(x[i])
             y[i] = missing
         elseif x[i] ≤ cut1 || x[i] ≥ cut4
@@ -92,14 +92,14 @@ function d_central(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 
         elseif cut2 ≤ x[i] ≤ cut3 #x[i] ≥ cut2 && x[i] ≤ cut3
             y[i] = 1
         elseif x[i] > cut1 && x[i] < cut2
-            y[i] = ((x[i] - cut1)/(cut2 - cut1))^scale
+            y[i] = ((x[i] - cut1) / (cut2 - cut1))^scale
         elseif x[i] > cut3 && x[i] < cut4
-            y[i] = ((x[i] - cut4)/(cut3 - cut4))^scale
+            y[i] = ((x[i] - cut4) / (cut3 - cut4))^scale
         end
     end
-    
+
     # Rescale from des_min to des_max
-    y = @. (y * (des_max - des_min))  + des_min
+    y = @. (y * (des_max - des_min)) + des_min
 
     return y
 end
@@ -128,34 +128,34 @@ end
 
     - `scale`: Controls how steeply the function increases or decreases.
 """
-function d_ends(x, cut1, cut2, cut3, cut4, des_min = 0, des_max = 1, scale = 1)
+function d_ends(x; cut1, cut2, cut3, cut4, des_min = 0, des_max = 1, scale = 1)
     @assert cut1 < cut2 "cut1 must be less than cut2"
     @assert cut2 < cut3 "cut2 must be less than cut3"
     @assert cut3 < cut4 "cut3 must be less than cut4"
     @assert 0 ≤ des_min ≤ 1 "des_min must be between zero and one"
     @assert 0 ≤ des_max ≤ 1 "des_max must be between zero and one"
     @assert scale > 0 "scale must be greater than zero"
-      
+
     # vector to hold results
-    y = similar(x, Union{Float64, Missing})
-    
-    for (i in 1:size(x, 1))
+    y = similar(x, Union{Float64,Missing})
+
+    for i = 1:size(x, 1)
         if ismissing(x[i])
             y[i] = missing
         elseif x[i] ≤ cut1 || x[i] ≥ cut4
             y[i] = 1
         elseif cut2 ≤ x[i] ≤ cut3
             y[i] = 0
-        elseif cut1 < x[i] < cut2 
-            y[i] = ((x[i] - cut2)/(cut1 - cut2))^scale
+        elseif cut1 < x[i] < cut2
+            y[i] = ((x[i] - cut2) / (cut1 - cut2))^scale
         elseif cut3 < x[i] < cut4
-            y[i] = ((x[i] - cut3)/(cut4 - cut3))^scale
+            y[i] = ((x[i] - cut3) / (cut4 - cut3))^scale
         end
     end
 
     # rescale:  des.min to des.max
-    y = @. (y * (des_max - des_min))  + des_min
-    
+    y = @. (y * (des_max - des_min)) + des_min
+
     return y
 end
 
@@ -180,16 +180,16 @@ end
 
     - `scale`: Controls how steeply the function increases or decreases.
 """
-function d_high(x, cut1, cut2, des_min = 0, des_max = 1, scale = 1)
+function d_high(x; cut1, cut2, des_min = 0, des_max = 1, scale = 1)
     @assert cut1 < cut2 "cut1 must be less than cut2"
     @assert 0 ≤ des_min ≤ 1 "des_min must be between zero and one"
     @assert 0 ≤ des_max ≤ 1 "des_max must be between zero and one"
-    @assert scale > 0 "scale must be greater than zero"  
+    @assert scale > 0 "scale must be greater than zero"
 
     # vector to hold results
-    y = similar(x, Union{Float64, Missing})
+    y = similar(x, Union{Float64,Missing})
 
-    for (i in 1:size(x, 1))
+    for i = 1:size(x, 1)
         if ismissing(x[i])
             y[i] = missing
         elseif x[i] < cut1
@@ -197,14 +197,14 @@ function d_high(x, cut1, cut2, des_min = 0, des_max = 1, scale = 1)
         elseif x[i] > cut2
             y[i] = 1
         else
-            y[i] = ((x[i] - cut1)/(cut2 - cut1))^scale
+            y[i] = ((x[i] - cut1) / (cut2 - cut1))^scale
         end
     end
-    
+
     # rescale:  des_min to des_max
     y = @. (y * (des_max - des_min)) + des_min
-  
-  return y
+
+    return y
 end
 
 
@@ -228,16 +228,16 @@ end
 
     - `scale`: Controls how steeply the function increases or decreases.
 """
-d_low = function(x, cut1, cut2,  des_min = 0, des_max = 1, scale = 1)
+function d_low(x; cut1, cut2, des_min = 0, des_max = 1, scale = 1)
     @assert cut1 < cut2 "cut1 must be less than cut2"
     @assert 0 ≤ des_min ≤ 1 "des_min must be between zero and one"
     @assert 0 ≤ des_max ≤ 1 "des_max must be between zero and one"
     @assert scale > 0 "scale must be greater than zero"
 
     # vector to hold results
-    y = similar(x, Union{Float64, Missing})
+    y = similar(x, Union{Float64,Missing})
 
-    for (i in 1:size(x, 1))
+    for i = 1:size(x, 1)
         if ismissing(x[i])
             y[i] = missing
         elseif x[i] < cut1
@@ -245,14 +245,44 @@ d_low = function(x, cut1, cut2,  des_min = 0, des_max = 1, scale = 1)
         elseif x[i] > cut2
             y[i] = 0
         else
-            y[i] = ((x[i] - cut2)/(cut1 - cut2))^scale
+            y[i] = ((x[i] - cut2) / (cut1 - cut2))^scale
         end
     end
-    
+
     # rescale:  des_min to des_max
-    y = @. (y * (des_max - des_min))  + des_min
+    y = @. (y * (des_max - des_min)) + des_min
 
     return y
+end
+
+"""
+Documentation here
+"""
+function d_overall(d; weights = nothing)
+
+    # More error handling coming
+    @assert typeof(d) ≠ Matrix{Float64}
+    "Desirabilities must be a matrix of floats."
+    @assert weights ≠ nothing && length(weights) ≠ size(d, 2)
+    "Must be as many weights as desirabilities."
+
+    if weights == nothing
+        weights = fill(1 / size(d, 2), size(d, 2))
+    end
+
+    # vector for the results
+    y = similar(d[1, :], Union{Float64,Missing})
+
+    # modify this to handle missing values?
+    for i = 1:size(d, 1)
+        numer = sum(@. log(d[i, :]) * weights)
+        denom = sum(weights)
+        desire = @. exp(numer / denom)
+        y[i] = desire
+    end
+
+    return y
+
 end
 
 end # module
