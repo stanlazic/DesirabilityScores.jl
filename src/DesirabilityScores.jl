@@ -260,26 +260,69 @@ Documentation here
 """
 function d_overall(d; weights = nothing)
 
-    # More error handling coming
-    @assert typeof(d) ≠ Matrix{Float64}
-    "Desirabilities must be a matrix of floats."
-    @assert weights ≠ nothing && length(weights) ≠ size(d, 2)
-    "Must be as many weights as desirabilities."
+    @assert d isa Matrix "First argument must be a matrix."
+    skip_missing = collect(skipmissing(d))
+    @assert eltype(skip_missing) <: Real "Desirabilities must be a subtype of Real"
+    @assert 0 ≤ minimum(skip_missing) "Desirabilities must be between 0 and 1"
+    @assert maximum(skip_missing) ≤ 1 "Desirabilities must be between 0 and 1"
 
-    if weights == nothing
+    if weights ≠ nothing
+        @assert weights isa Vector "Weights must be a vector"
+        @assert eltype(weights) <: Real "Weights must be a subtype of Real"
+        @assert length(weights) == size(d, 2) "Must be as many weights as desirabilities"
+    else
         weights = fill(1 / size(d, 2), size(d, 2))
     end
 
     # vector for the results
     y = similar(d[1, :], Union{Float64,Missing})
 
-    # modify this to handle missing values?
     for i = 1:size(d, 1)
-        numer = sum(@. log(d[i, :]) * weights)
+        desire = d[i, :]
+        numer = sum(skipmissing(@. log(desire) * weights))
         denom = sum(weights)
-        desire = @. exp(numer / denom)
-        y[i] = desire
+        y[i] = exp(numer / denom)
     end
+
+    return y
+
+end
+
+"""
+Documentation here
+"""
+# TO DO: find out out how to handle package dependencies!
+function d_rank(x; low_to_high = true, method = "ordinal")
+
+    @assert x isa Vector "First argument must be a vector"
+    @assert low_to_high isa Bool "low_to_high must be of type Bool."
+    @assert method in ["ordinal", "compete", "dense", "tied"] "method must be one of: ordinal, compete, dense, tied"
+
+    skip_missing = collect(skipmissing(x))
+    which_missing = findall(ismissing, x)
+    num_missing = length(which_missing)
+    @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real"
+
+    # This is necessary to handle missing values like in R
+    x[which_missing] = fill(maximum(skip_missing) + 1, num_missing)
+
+    if method == "ordinal"
+        y = ordinalrank(x)
+    elseif method == "compete"
+        y = competerank(x)
+    elseif method == "dense"
+        y = denserank(x)
+    elseif method == "tied"
+        y = tiedrank(x)
+    end
+
+    if low_to_high == true
+        y = reverse(y)
+    end
+
+    min_y = minimum(y)
+    max_y = maximum(y)
+    y = @. (y - min_y) / (max_y - min_y)
 
     return y
 
