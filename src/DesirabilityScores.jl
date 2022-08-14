@@ -256,7 +256,17 @@ function d_low(x; cut1, cut2, des_min = 0, des_max = 1, scale = 1)
 end
 
 """
-Documentation here
+        d_overall(d; weights = nothing)
+
+    Combines any number of desirability values into an overall desirability.
+
+    # Arguments
+    - `d`: A matrix of desirabilities. Rows are observations and columns
+      are desirabilities. Non-missing values must be a subtype of Real.
+
+    - `weights`: Allows some desirabilities to count for more in the overall calculation.
+      Defaults to equal weighting. If specified, must be a non-empty vector with elements
+      a subtype of Real. 
 """
 function d_overall(d; weights = nothing)
 
@@ -289,7 +299,21 @@ function d_overall(d; weights = nothing)
 end
 
 """
-Documentation here
+        d_rank(x; low_to_high = true, method = "ordinal")
+
+    Values are ranked from low to high or high to low,
+    and then the ranks are mapped to a 0-1 scale.
+
+    # Arguments
+    - `x`: A non-empty vector. Non-missing elements must be a subtype of Real.
+
+    - `low_to_high`: If true, low ranks have high desirabilities;
+      if false, high ranks have high desirabilities. Defaults to true.
+
+    - `method`: What method should be used to rank x? Options include
+      ordinal, compete, dense, and tied. Note these are the same options
+      offered by ranking functions in StatsBase.jl (which this
+      funciton uses). See that package's documentation for more details.
 """
 # TO DO: find out out how to handle package dependencies!
 function d_rank(x; low_to_high = true, method = "ordinal")
@@ -303,7 +327,7 @@ function d_rank(x; low_to_high = true, method = "ordinal")
     num_missing = length(which_missing)
     @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real"
 
-    # This is necessary to handle missing values like in R
+    # This is necessary to handle missing values as in R
     x[which_missing] = fill(maximum(skip_missing) + 1, num_missing)
 
     if method == "ordinal"
