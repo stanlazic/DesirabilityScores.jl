@@ -1,14 +1,15 @@
 module DesirabilityScores
 
+import StatsBase.ordinalrank, StatsBase.competerank
+import StatsBase.tiedrank, StatsBase.denserank
+
 export d_4pl
 export d_central
 export d_ends
 export d_high
 export d_low
-# export d_overall
-# export d_rank
-# __Gabe testing__
-
+export d_overall
+export d_rank
 
 """
         d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
@@ -36,7 +37,7 @@ export d_low
     deemed desirable can be controlled with the `hill` parameter; when
     `hill` > 0 high values are desirable and when `hill` < 0 low values
     are desirable.
-    """
+"""
 function d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
     @assert hill ≠ 0.0 "The Hill coefficient must not equal zero"
     @assert 0 ≤ des_min ≤ 1 "des_min must be between zero and one"
@@ -47,7 +48,6 @@ function d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
 
     return y
 end
-
 
 """
         d_central(x; cut1, cut2, cut3, cut4, des_min = 0, des_max = 1, scale = 1)
@@ -104,7 +104,6 @@ function d_central(x; cut1, cut2, cut3, cut4, des_min = 0, des_max = 1, scale = 
     return y
 end
 
-
 """
         d_ends(x; cut1, cut2, cut3, cut4, des_min = 0, des_max = 1, scale = 1)
 
@@ -159,7 +158,6 @@ function d_ends(x; cut1, cut2, cut3, cut4, des_min = 0, des_max = 1, scale = 1)
     return y
 end
 
-
 """
         d_high(x; cut1, cut2, des_min = 0, des_max = 1, scale = 1)
 
@@ -206,7 +204,6 @@ function d_high(x; cut1, cut2, des_min = 0, des_max = 1, scale = 1)
 
     return y
 end
-
 
 """
         d_low(x; cut1, cut2, des_min = 0, des_max = 1, scale = 1)
@@ -266,7 +263,7 @@ end
 
     - `weights`: Allows some desirabilities to count for more in the overall calculation.
       Defaults to equal weighting. If specified, must be a non-empty vector with elements
-      a subtype of Real. 
+      a subtype of Real.
 """
 function d_overall(d; weights = nothing)
 
@@ -352,4 +349,4 @@ function d_rank(x; low_to_high = true, method = "ordinal")
 
 end
 
-end # module
+end # end of module
