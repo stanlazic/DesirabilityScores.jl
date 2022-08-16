@@ -1,7 +1,6 @@
 module DesirabilityScores
 
-import StatsBase.ordinalrank, StatsBase.competerank
-import StatsBase.tiedrank, StatsBase.denserank
+using StatsBase
 
 export d_4pl
 export d_central
@@ -39,6 +38,9 @@ export d_rank
     are desirable.
 """
 function d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
+
+    skip_missing = collect(skipmissing(x))
+    @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
     @assert hill ≠ 0.0 "The Hill coefficient must not equal zero"
     @assert 0 ≤ des_min ≤ 1 "des_min must be between zero and one"
     @assert 0 ≤ des_max ≤ 1 "des_max must be between zero and one"
@@ -50,7 +52,7 @@ function d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
 end
 
 """
-        d_central(x; cut1, cut2, cut3, cut4, des_min = 0, des_max = 1, scale = 1)
+        d_central(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
 
     Maps a numeric variable to a 0-1 scale such that values in the
     middle of the distribution are desirable. Values less than `cut1`
@@ -73,7 +75,10 @@ end
 
     - `scale`: Controls how steeply the function increases or decreases.
 """
-function d_central(x; cut1, cut2, cut3, cut4, des_min = 0, des_max = 1, scale = 1)
+function d_central(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
+
+    skip_missing = collect(skipmissing(x))
+    @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
     @assert cut1 < cut2 "cut1 must be less than cut2"
     @assert cut2 < cut3 "cut2 must be less than cut3"
     @assert cut3 < cut4 "cut3 must be less than cut4"
@@ -105,7 +110,7 @@ function d_central(x; cut1, cut2, cut3, cut4, des_min = 0, des_max = 1, scale = 
 end
 
 """
-        d_ends(x; cut1, cut2, cut3, cut4, des_min = 0, des_max = 1, scale = 1)
+        d_ends(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
 
     Maps a numeric variable to a 0-1 scale such that values at the
     ends (both high and low) of the distribution are desirable. Values
@@ -127,7 +132,10 @@ end
 
     - `scale`: Controls how steeply the function increases or decreases.
 """
-function d_ends(x; cut1, cut2, cut3, cut4, des_min = 0, des_max = 1, scale = 1)
+function d_ends(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
+
+    skip_missing = collect(skipmissing(x))
+    @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
     @assert cut1 < cut2 "cut1 must be less than cut2"
     @assert cut2 < cut3 "cut2 must be less than cut3"
     @assert cut3 < cut4 "cut3 must be less than cut4"
@@ -159,7 +167,7 @@ function d_ends(x; cut1, cut2, cut3, cut4, des_min = 0, des_max = 1, scale = 1)
 end
 
 """
-        d_high(x; cut1, cut2, des_min = 0, des_max = 1, scale = 1)
+        d_high(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
 
     Maps a numeric variable to a 0-1 scale such that high values are
     desirable. Values less than `cut1` will have a low
@@ -178,7 +186,10 @@ end
 
     - `scale`: Controls how steeply the function increases or decreases.
 """
-function d_high(x; cut1, cut2, des_min = 0, des_max = 1, scale = 1)
+function d_high(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
+
+    skip_missing = collect(skipmissing(x))
+    @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
     @assert cut1 < cut2 "cut1 must be less than cut2"
     @assert 0 ≤ des_min ≤ 1 "des_min must be between zero and one"
     @assert 0 ≤ des_max ≤ 1 "des_max must be between zero and one"
@@ -206,7 +217,7 @@ function d_high(x; cut1, cut2, des_min = 0, des_max = 1, scale = 1)
 end
 
 """
-        d_low(x; cut1, cut2, des_min = 0, des_max = 1, scale = 1)
+        d_low(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
 
     Maps a numeric variable to a 0-1 scale such that low values are
     desirable. Values less than `cut1` will have a high
@@ -225,7 +236,10 @@ end
 
     - `scale`: Controls how steeply the function increases or decreases.
 """
-function d_low(x; cut1, cut2, des_min = 0, des_max = 1, scale = 1)
+function d_low(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
+
+    skip_missing = collect(skipmissing(x))
+    @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
     @assert cut1 < cut2 "cut1 must be less than cut2"
     @assert 0 ≤ des_min ≤ 1 "des_min must be between zero and one"
     @assert 0 ≤ des_max ≤ 1 "des_max must be between zero and one"
@@ -274,9 +288,9 @@ function d_overall(d; weights = nothing)
     @assert maximum(skip_missing) ≤ 1 "Desirabilities must be between 0 and 1"
 
     if weights ≠ nothing
-        @assert weights isa Vector "Weights must be a vector"
         @assert eltype(weights) <: Real "Weights must be a subtype of Real"
         @assert length(weights) == size(d, 2) "Must be as many weights as desirabilities"
+        @assert minimum(weights) ≥ 0 "Weights must be positive"
     else
         weights = fill(1 / size(d, 2), size(d, 2))
     end
@@ -315,7 +329,6 @@ end
 # TO DO: find out out how to handle package dependencies!
 function d_rank(x; low_to_high = true, method = "ordinal")
 
-    @assert x isa Vector "First argument must be a vector"
     @assert low_to_high isa Bool "low_to_high must be of type Bool."
     @assert method in ["ordinal", "compete", "dense", "tied"] "method must be one of: ordinal, compete, dense, tied"
 
@@ -338,7 +351,7 @@ function d_rank(x; low_to_high = true, method = "ordinal")
     end
 
     if low_to_high == true
-        y = reverse(y)
+        y = length(y) + 1 .- y
     end
 
     min_y = minimum(y)
