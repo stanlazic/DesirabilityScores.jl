@@ -296,7 +296,7 @@ function d_overall(d; weights = nothing)
     end
 
     # vector for the results
-    y = similar(d[1, :], Union{Float64,Missing})
+    y = similar(d[:, 1], Union{Float64,Missing})
 
     for i = 1:size(d, 1)
         desire = d[i, :]
