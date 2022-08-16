@@ -340,6 +340,10 @@ function d_rank(x; low_to_high = true, method = "ordinal")
     # This is necessary to handle missing values as in R
     x[which_missing] = fill(maximum(skip_missing) + 1, num_missing)
 
+    # "ordinal" = "first" in R
+    # "tied" = "average" in R
+    # "compete" = "min" in R
+    # "dense" has no equivalent in R
     if method == "ordinal"
         y = ordinalrank(x)
     elseif method == "compete"
