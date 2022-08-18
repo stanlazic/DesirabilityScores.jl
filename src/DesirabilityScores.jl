@@ -381,27 +381,58 @@ end
       a subtype of Real.
 
     - `des_func`: A string specifying which of the desirability
-      functions to use (i.e., des_func = "d_4pl").
+      functions to use (i.e., des_func = "d_4pl"). "d_rank" is
+      also allowed.
 
-    - `des_args`: A named tuple specifying the
-      arguments passed to the desirability function of choice.
+    - `pos_args`: A tuple or vector specifying the positional
+      arguments passed to the desirability function of choice. Should
+      be ordered as they would be calling the original desirability function.
+      NOTE: this should exlude x, which is explicitly passed as the first
+      argument to des_line.
+
+    - `key_args`: A named tuple specifying the keyword arguments
+      passed to the desirability function of choice. Recall that
+      named tuples with only one element must include a comma, i.e.
+      one might specify des_line(..., key_args = (scale = 2,)). 
 
     - `plot_args...`: Additional arguments for Plot.jl's plot function.
 """
-function des_line(x; des_func, des_args, plot_args...)
+function des_line(x; des_func, pos_args = nothing, key_args = nothing, plot_args...)
 
     skip_missing = collect(skipmissing(x))
     @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
     @assert des_func in ["d_4pl", "d_central", "d_ends", "d_high", "d_low", "d_rank"]
-        "des_func must be one of d_4pl, d_central, d_ends, d_high, d_low, d_rank"
-    @assert des_args isa NamedTuple "des_args must be a named tuple"
-    ## add better error handling for des_args?
-    ## idea: extract arguments of des_func and check that they match
+    "des_func must be one of the provided desiarability functions."
 
-    y = getfield(Main, Symbol(des_func))(x; des_args...)
-    plot!(y, plot_args...)
+    if des_func == "d_4pl"
+        @assert :hill in collect(keys(key_args)) "hill paramter must be specified (no default value)"
+        @assert :inflec in collect(keys(key_args)) "inflec parameter must be specified (no default value)"
+        y = d_4pl(x; key_args...)
+    elseif des_func == "d_central" || des_func == "d_ends"
+        @assert length(pos_args) == 4 "Incorrect number of cuts specified"
+        if key_args != nothing
+            y = getfield(Main, Symbol(des_func))(x, pos_args...; key_args...)
+        else
+            y = getfield(Main, Symbol(des_func))(x, pos_args...)
+        end
+    elseif des_func == "d_high" || des_func == "d_low"
+        @assert length(pos_args) == 2 "Incorrect number of cuts specified"
+        if key_args != nothing
+            y = getfield(Main, Symbol(des_func))(x, pos_args...; key_args...)
+        else
+            y = getfield(Main, Symbol(des_func))(x; pos_args...)
+        end
+    elseif des_func == "d_rank"
+        if key_args == nothing
+            y = d_rank(x)
+        else
+            y = d_rank(x; key_args...)
+        end
+    end
 
-    return nothing
+    p = plot!(y, plot_args...)
+
+    return p
 
 end
 
