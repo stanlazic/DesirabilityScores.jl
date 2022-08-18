@@ -299,3 +299,16 @@ end
     @test_throws AssertionError d_rank(to_rank; method = "abc")
 
 end
+
+@testset "des_line" begin
+
+    # Explicitly test plotting capabailities?
+
+    @test_throws AssertionError des_line(
+        data;
+        des_func = "abc",
+        des_args = (hill = 1, inflec = 10),
+    )
+    @test_throws AssertionError des_line(data; des_func = "d_4pl", des_args = [1, 10])
+
+end

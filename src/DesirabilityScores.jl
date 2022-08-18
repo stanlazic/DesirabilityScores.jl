@@ -1,6 +1,7 @@
 module DesirabilityScores
 
 using StatsBase
+using Plots
 
 export d_4pl
 export d_central
@@ -9,6 +10,7 @@ export d_high
 export d_low
 export d_overall
 export d_rank
+export des_line
 
 """
         d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
@@ -264,6 +266,7 @@ function d_low(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
     y = @. (y * (des_max - des_min)) + des_min
 
     return y
+
 end
 
 """
@@ -326,7 +329,6 @@ end
       offered by ranking functions in StatsBase.jl (which this
       funciton uses). See that package's documentation for more details.
 """
-# TO DO: find out out how to handle package dependencies!
 function d_rank(x; low_to_high = true, method = "ordinal")
 
     @assert low_to_high isa Bool "low_to_high must be of type Bool."
@@ -363,6 +365,43 @@ function d_rank(x; low_to_high = true, method = "ordinal")
     y = @. (y - min_y) / (max_y - min_y)
 
     return y
+
+end
+
+"""
+        des_line(x; des_func, des_args, plot_args...)
+
+    Overlays a plot of any of the provided desirability functions given a vector
+    of data. Typically used with an existing histogram or density plot. Note
+    that users may have to adjust plotting paramaters of their original
+    graphic to ensure that it is aligned with the desirability function.
+
+    # Arguments
+    - `x`: A non-empty vector. Non-missing elements must be
+      a subtype of Real.
+
+    - `des_func`: A string specifying which of the desirability
+      functions to use (i.e., des_func = "d_4pl").
+
+    - `des_args`: A named tuple specifying the
+      arguments passed to the desirability function of choice.
+
+    - `plot_args...`: Additional arguments for Plot.jl's plot function.
+"""
+function des_line(x; des_func, des_args, plot_args...)
+
+    skip_missing = collect(skipmissing(x))
+    @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
+    @assert des_func in ["d_4pl", "d_central", "d_ends", "d_high", "d_low", "d_rank"]
+        "des_func must be one of d_4pl, d_central, d_ends, d_high, d_low, d_rank"
+    @assert des_args isa NamedTuple "des_args must be a named tuple"
+    ## add better error handling for des_args?
+    ## idea: extract arguments of des_func and check that they match
+
+    y = getfield(Main, Symbol(des_func))(x; des_args...)
+    plot!(y, plot_args...)
+
+    return nothing
 
 end
 
