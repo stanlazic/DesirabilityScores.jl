@@ -428,7 +428,7 @@ function des_line(x; des_func, pos_args = nothing, key_args = nothing, plot_args
         if key_args != nothing
             y = getfield(Main, Symbol(des_func))(x, pos_args...; key_args...)
         else
-            y = getfield(Main, Symbol(des_func))(x; pos_args...)
+            y = getfield(Main, Symbol(des_func))(x, pos_args...)
         end
 
     elseif des_func == "d_rank"

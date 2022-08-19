@@ -304,79 +304,46 @@ end
 @testset "des_line" begin
 
     plots = Array{Any}(missing, 6)
-    plots[1] = des_line(
-        data;
-        des_func = "d_4pl",
-        key_args = (hill = 1, inflec = 10)
-    )
-    plots[2] = des_line(
-        data;
-        des_func = "d_central",
-        pos_args = (5, 10, 15, 20)
-    )
+    plots[1] = des_line(data; des_func = "d_4pl", key_args = (hill = 1, inflec = 10))
+    plots[2] = des_line(data; des_func = "d_central", pos_args = (5, 10, 15, 20))
     plots[3] = des_line(
         data;
         des_func = "d_ends",
         pos_args = (5, 10, 15, 20),
-        key_args = (scale = 5, des_min = .5, des_max = .7)
+        key_args = (scale = 5, des_min = 0.5, des_max = 0.7),
     )
-    plots[4] = des_line(
-        data;
-        des_func = "d_high",
-        pos_args = (7.5, 12.5)
-    )
-    plots[5] = des_line(
-        data;
-        des_func = "d_low",
-        pos_args = (7.5, 12.5)
-    )
-    plots[6] = des_line(
-        data;
-        des_func = "d_rank",
-        key_args = (method = "tied",)
-    )
+    plots[4] = des_line(data; des_func = "d_high", pos_args = (7.5, 12.5))
+    plots[5] = des_line(data; des_func = "d_low", pos_args = (7.5, 12.5))
+    plots[6] = des_line(data; des_func = "d_rank", key_args = (method = "tied",))
 
-    @test typeof(plots[1]) <: Plots.Plot
-    #=for i=1:6
+    for i = 1:6
         @test typeof(plots[i]) <: Plots.Plot
-    end=#
+    end
 
     @test_throws AssertionError des_line(
         ["a", "b"];
         des_func = "d_4pl",
-        pos_args = (5, 10, 15, 20)
+        pos_args = (5, 10, 15, 20),
     )
-    @test_throws AssertionError des_line(
-        data;
-        des_func = "abc",
-        pos_args = (5, 10, 15, 20)
-        )
+    @test_throws AssertionError des_line(data; des_func = "abc", pos_args = (5, 10, 15, 20))
     @test_throws AssertionError des_line(
         data;
         des_func = "d_4pl",
-        key_args = (des_min = .2, des_max = .7)
+        key_args = (des_min = 0.2, des_max = 0.7),
     )
-    @test_throws AssertionError des_line(
-        data;
-        des_func = "d_ends",
-        pos_args = (5, 10, 15),
-    )
+    @test_throws AssertionError des_line(data; des_func = "d_ends", pos_args = (5, 10, 15))
     @test_throws AssertionError des_line(
         data;
         des_func = "d_central",
         pos_args = (5, 10, 15, 20),
-        key_args = (.5, .7)
+        key_args = (0.5, 0.7),
     )
-    @test_throws AssertionError des_line(
-        data;
-        des_func = "d_high",
-        pos_args = 7.5
-    )
+    @test_throws AssertionError des_line(data; des_func = "d_high", pos_args = 7.5)
     @test_throws AssertionError des_line(
         data;
         des_func = "d_low",
         pos_args = (7.5, 12.5),
-        key_args = (scale = 4)
+        key_args = (scale = 4),
     )
 
 end
