@@ -345,5 +345,7 @@ end
         pos_args = (7.5, 12.5),
         key_args = (scale = 4),
     )
+    @test_throws AssertionError des_line(data; des_func = "d_central")
+    @test_throws AssertionError des_line(data; des_func = "d_low", key_args = (scale = 3,))
 
 end

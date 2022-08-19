@@ -48,9 +48,9 @@ function d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
     @assert 0 ≤ des_max ≤ 1 "des_max must be between zero and one"
 
     y = @. ((des_min - des_max) / (1 + ((x / inflec)^hill))) + des_max
-    #y = ((des_min - des_max) ./ (1 .+ ((x ./ inflec).^hill))) .+ des_max
 
     return y
+
 end
 
 """
@@ -109,6 +109,7 @@ function d_central(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 
     y = @. (y * (des_max - des_min)) + des_min
 
     return y
+
 end
 
 """
@@ -166,6 +167,7 @@ function d_ends(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
     y = @. (y * (des_max - des_min)) + des_min
 
     return y
+
 end
 
 """
@@ -216,6 +218,7 @@ function d_high(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
     y = @. (y * (des_max - des_min)) + des_min
 
     return y
+
 end
 
 """
@@ -333,7 +336,6 @@ function d_rank(x; low_to_high = true, method = "ordinal")
 
     @assert low_to_high isa Bool "low_to_high must be of type Bool."
     @assert method in ["ordinal", "compete", "dense", "tied"] "method must be one of: ordinal, compete, dense, tied"
-
     skip_missing = collect(skipmissing(x))
     which_missing = findall(ismissing, x)
     num_missing = length(which_missing)
@@ -408,37 +410,31 @@ function des_line(x; des_func, pos_args = nothing, key_args = nothing, plot_args
     end
 
     if des_func == "d_4pl"
-
         @assert :hill in collect(keys(key_args)) "hill paramter must be specified (no default value)"
         @assert :inflec in collect(keys(key_args)) "inflec parameter must be specified (no default value)"
         y = d_4pl(x; key_args...)
-
     elseif des_func == "d_central" || des_func == "d_ends"
-
+        @assert pos_args != nothing "No cuts specified"
         @assert length(pos_args) == 4 "Incorrect number of cuts specified"
         if key_args != nothing
             y = getfield(Main, Symbol(des_func))(x, pos_args...; key_args...)
         else
             y = getfield(Main, Symbol(des_func))(x, pos_args...)
         end
-
     elseif des_func == "d_high" || des_func == "d_low"
-
+        @assert pos_args != nothing "No cuts specified"
         @assert length(pos_args) == 2 "Incorrect number of cuts specified"
         if key_args != nothing
             y = getfield(Main, Symbol(des_func))(x, pos_args...; key_args...)
         else
             y = getfield(Main, Symbol(des_func))(x, pos_args...)
         end
-
     elseif des_func == "d_rank"
-
         if key_args == nothing
             y = d_rank(x)
         else
             y = d_rank(x; key_args...)
         end
-
     end
 
     p = plot!(y, plot_args...)
