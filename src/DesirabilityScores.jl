@@ -393,7 +393,7 @@ end
     - `key_args`: A named tuple specifying the keyword arguments
       passed to the desirability function of choice. Recall that
       named tuples with only one element must include a comma, i.e.
-      one might specify des_line(..., key_args = (scale = 2,)). 
+      one might specify des_line(..., key_args = (scale = 2,)).
 
     - `plot_args...`: Additional arguments for Plot.jl's plot function.
 """
@@ -403,31 +403,42 @@ function des_line(x; des_func, pos_args = nothing, key_args = nothing, plot_args
     @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
     @assert des_func in ["d_4pl", "d_central", "d_ends", "d_high", "d_low", "d_rank"]
     "des_func must be one of the provided desiarability functions."
+    if key_args != nothing
+        @assert key_args isa NamedTuple "key_args must be a named tuple"
+    end
 
     if des_func == "d_4pl"
+
         @assert :hill in collect(keys(key_args)) "hill paramter must be specified (no default value)"
         @assert :inflec in collect(keys(key_args)) "inflec parameter must be specified (no default value)"
         y = d_4pl(x; key_args...)
+
     elseif des_func == "d_central" || des_func == "d_ends"
+
         @assert length(pos_args) == 4 "Incorrect number of cuts specified"
         if key_args != nothing
             y = getfield(Main, Symbol(des_func))(x, pos_args...; key_args...)
         else
             y = getfield(Main, Symbol(des_func))(x, pos_args...)
         end
+
     elseif des_func == "d_high" || des_func == "d_low"
+
         @assert length(pos_args) == 2 "Incorrect number of cuts specified"
         if key_args != nothing
             y = getfield(Main, Symbol(des_func))(x, pos_args...; key_args...)
         else
             y = getfield(Main, Symbol(des_func))(x; pos_args...)
         end
+
     elseif des_func == "d_rank"
+
         if key_args == nothing
             y = d_rank(x)
         else
             y = d_rank(x; key_args...)
         end
+
     end
 
     p = plot!(y, plot_args...)
