@@ -19,7 +19,7 @@ function.
 
 # Arguments
 
-- `x`: Vector of reals.
+- `x`: Vector whose elements are a subtype of `Real`.
 
 - `des_min, des_max`: The lower and upper asymptotes of the   
    function. Defaults to zero and one, respectively.
@@ -39,7 +39,14 @@ This function uses a four parameter logistic model to map a
 numeric variable onto a 0-1 scale. Whether high or low values are  
 deemed desirable can be controlled with the `hill` parameter; when  
 `hill` > 0 high values are desirable and when `hill` < 0 low values  
-are desirable.
+are desirable. 
+
+# Examples 
+
+```julia-repl
+my_data = [1,5,2,6,10,-3] 
+d_4pl(my_data; hill = 1, inflec = 5) 
+```
 
 """
 function d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
@@ -70,7 +77,7 @@ allowable ranges. If `cut2` and `cut3` are close to each other,
 this function can be used when a target value is desirable.
 
 # Arguments
-- `x`: Vector of reals.
+- `x`: Vector whose elements are a subtype of `Real`. 
 
 - `cut1`, `cut2`, `cut3`, `cut4`: Values of the original data that
   define where the desirability function changes.
@@ -128,7 +135,7 @@ when the data represent differences between groups, where both
 q  high an low values are of interest.
 
 # Arguments
-- `x`: Vector of reals.
+- `x`: Vector whose elements are a subtype of `Real`. 
 
 - `cut1`, `cut2`, `cut3`, `cut4`: Values of the original data that
   define where the desirability function changes.
@@ -183,7 +190,7 @@ desirability. Values between `cut1` and `cut2` will have
 intermediate values.
 
 # Arguments
-- `x`: Vector of reals.
+- `x`: Vector whose elements are a subtype of `Real`. 
 
 - `cut1`, `cut2`: Values of the original data that
   define where the desirability function changes.
@@ -234,7 +241,7 @@ desirability. Values between `cut1` and `cut2` will have
 intermediate values.
 
 # Arguments
-- `x`: Vector of reals.
+- `x`: Vector whose values are a subtype of `Real`. 
 
 - `cut1`, `cut2`: Values of the original data that
   define where the desirability function changes.
@@ -282,11 +289,11 @@ Combines any number of desirability values into an overall desirability.
 
 # Arguments
 - `d`: A matrix of desirabilities. Rows are observations and columns
-  are desirabilities. Non-missing values must be a subtype of Real.
+  are desirabilities. Non-missing values must be a subtype of `Real`.
 
 - `weights`: Allows some desirabilities to count for more in the overall calculation.
   Defaults to equal weighting. If specified, must be a non-empty vector with elements
-  a subtype of Real.
+  a subtype of `Real`.
 """
 function d_overall(d; weights = nothing)
 
@@ -325,14 +332,14 @@ Values are ranked from low to high or high to low,
 and then the ranks are mapped to a 0-1 scale.
 
 # Arguments
-- `x`: A non-empty vector. Non-missing elements must be a subtype of Real.
+- `x`: A non-empty vector. Non-missing elements must be a subtype of `Real`.
 
-- `low_to_high`: If true, low ranks have high desirabilities;
-  if false, high ranks have high desirabilities. Defaults to true.
+- `low_to_high`: If `true`, low ranks have high desirabilities;
+  if `false`, high ranks have high desirabilities. Defaults to `true`.
 
 - `method`: What method should be used to rank x? Options include
-  ordinal, compete, dense, and tied. Note these are the same options
-  offered by ranking functions in StatsBase.jl (which this
+  `ordinal`, `compete`, `dense`, and `tied`. Note these are the same options
+  offered by ranking functions in `StatsBase.jl` (which this
   funciton uses). See that package's documentation for more details.
 """
 function d_rank(x; low_to_high = true, method = "ordinal")
@@ -383,24 +390,24 @@ graphic to ensure that it is aligned with the desirability function.
 
 # Arguments
 - `x`: A non-empty vector. Non-missing elements must be
-  a subtype of Real.
+  a subtype of `Real`.
 
 - `des_func`: A string specifying which of the desirability
-  functions to use (i.e., des_func = "d_4pl"). "d_rank" is
+  functions to use (i.e., `des_func = "d_4pl"`). `"d_rank"` is
   also allowed.
 
 - `pos_args`: A tuple or vector specifying the positional
   arguments passed to the desirability function of choice. Should
   be ordered as they would be calling the original desirability function.
-  NOTE: this should exlude x, which is explicitly passed as the first
+  NOTE: this should exlude `x`, which is explicitly passed as the first
   argument to des_line.
 
 - `key_args`: A named tuple specifying the keyword arguments
   passed to the desirability function of choice. Recall that
   named tuples with only one element must include a comma, i.e.
-  one might specify des_line(..., key_args = (scale = 2,)).
+  one might specify `des_line(..., key_args = (scale = 2,))`.
 
-- `plot_args...`: Additional arguments for Plot.jl's plot function.
+- `plot_args...`: Additional arguments for `Plot.jl`'s plot function.
 """
 function des_line(x; des_func, pos_args = nothing, key_args = nothing, plot_args...)
 
