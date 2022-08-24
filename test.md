@@ -1,4 +1,4 @@
-
+"""
    d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
 
 Maps a numeric variable to a 0-1 scale with a 4 parameter logistic
@@ -27,3 +27,4 @@ numeric variable onto a 0-1 scale. Whether high or low values are
 deemed desirable can be controlled with the `hill` parameter; when
 `hill` > 0 high values are desirable and when `hill` < 0 low values
 are desirable.
+"""
