@@ -21,15 +21,15 @@ function.
 
 - `x`: Vector of reals.
 
-- `des_min, des_max`: The lower and upper asymptotes of the\   
+- `des_min, des_max`: The lower and upper asymptotes of the   
    function. Defaults to zero and one, respectively.
 
-- `hill`: Hill coefficient. It controls the steepness and direction of\  
-   the slope. A value greater than zero has a positive slope and a\  
-   value less than zero has a negative slope. The higher the absolute\  
+- `hill`: Hill coefficient. It controls the steepness and direction of  
+   the slope. A value greater than zero has a positive slope and a
+   value less than zero has a negative slope. The higher the absolute  
    value, the steeper the slope. 
 
-- `inflec`: Inflection point. Is the point on the x-axis where the\  
+- `inflec`: Inflection point. Is the point on the x-axis where the
    curvature of the function changes from concave upwards to concave\  
    downwards (or vice versa).
 
