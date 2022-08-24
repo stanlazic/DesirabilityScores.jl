@@ -15,5 +15,5 @@ Documentation for [DesirabilityScores](https://github.com/stanlazic/Desirability
 ```
 
 ```@autodocs
-Modules = [DesirabilityScores]
+Modules=[DesirabilityScores]
 ```

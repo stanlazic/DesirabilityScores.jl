@@ -1,7 +1,7 @@
 using DesirabilityScores
 using Documenter
 
-DocMeta.setdocmeta!(DesirabilityScores, :DocTestSetup, :(using DesirabilityScores); recursive=true)
+#DocMeta.setdocmeta!(DesirabilityScores, :DocTestSetup, :(using DesirabilityScores); recursive=true)
 
 makedocs(;
     modules=[DesirabilityScores],
@@ -12,10 +12,9 @@ makedocs(;
     #    prettyurls=get(ENV, "CI", "false") == "true",
     #    assets=String[],
     #),
-    #format=Documenter.LaTeX(),
     #format=Documenter.HTML(),
     format=Documenter.LaTeX(), 
     pages=[
-        "Home" => "index.md",
+        "index.md"
     ],
 )
