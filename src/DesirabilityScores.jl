@@ -44,8 +44,25 @@ are desirable.
 # Examples 
 
 ```julia-repl
-julia> my_data = [1,5,2,6,10,-3] 
-julia> d_4pl(my_data; hill = 1, inflec = 5) 
+julia> my_data = [1,3,4,0,-2,7,10] 
+7-element Vector{Int64}:
+  1
+  3
+  4
+  0
+ -2
+  7
+ 10
+
+julia> d_4pl(my_data; hill = 1, inflec = 5)
+7-element Vector{Float64}:
+  0.16666666666666663
+  0.375
+  0.4444444444444444
+  0.0
+ -0.6666666666666667
+  0.5833333333333333
+  0.6666666666666667 
 ```
 
 """
@@ -86,6 +103,30 @@ this function can be used when a target value is desirable.
   function. Defaults to zero and one, respectively.
 
 - `scale`: Controls how steeply the function increases or decreases.
+
+# Examples 
+
+```julia-repl 
+julia> my_data = [1,3,4,0,-2,7,10]
+7-element Vector{Int64}:
+  1
+  3
+  4
+  0
+ -2
+  7
+ 10
+
+julia> d_central(my_data, 0, 2, 4, 6; scale = 2) 
+7-element Vector{Float64}:
+ 0.25
+ 1.0
+ 1.0
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+```
 """
 function d_central(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
 
@@ -144,6 +185,30 @@ q  high an low values are of interest.
   function. Defaults to zero and one, respectively.
 
 - `scale`: Controls how steeply the function increases or decreases.
+
+# Examples 
+
+```julia-repl 
+julia> d_ends(my_data, 0, 2, 4, 6; scale = 2)
+7-element Vector{Float64}:
+ 0.25
+ 0.0
+ 0.0
+ 1.0
+ 1.0
+ 1.0
+ 1.0
+
+julia> d_ends(my_data, 0, 2, 4, 6; scale = .5)
+7-element Vector{Float64}:
+ 0.7071067811865476
+ 0.0
+ 0.0
+ 1.0
+ 1.0
+ 1.0
+ 1.0
+ ```
 """
 function d_ends(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
 
@@ -199,6 +264,30 @@ intermediate values.
   function. Defaults to zero and one, respectively.
 
 - `scale`: Controls how steeply the function increases or decreases.
+
+# Examples 
+
+```julia-repl 
+julia> my_data = [1,3,4,0,-2,7,10]
+7-element Vector{Int64}:
+  1
+  3
+  4
+  0
+ -2
+  7
+ 10
+
+julia> d_high(my_data, 3,5)
+7-element Vector{Float64}:
+ 0.0
+ 0.0
+ 0.5
+ 0.0
+ 0.0
+ 1.0
+ 1.0
+```
 """
 function d_high(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
 
@@ -250,6 +339,29 @@ intermediate values.
   function. Defaults to zero and one, respectively.
 
 - `scale`: Controls how steeply the function increases or decreases.
+
+# Examples 
+
+```julia-repl 
+julia> my_data = [1,3,4,0,-2,7,10]
+7-element Vector{Int64}:
+  1
+  3
+  4
+  0
+ -2
+  7
+ 10
+julia> d_low(my_data, 3,5; des_min = .25)
+7-element Vector{Float64}:
+ 1.0
+ 1.0
+ 0.625
+ 1.0
+ 1.0
+ 0.25
+ 0.25
+```
 """
 function d_low(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
 
