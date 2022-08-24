@@ -73,10 +73,10 @@ this function can be used when a target value is desirable.
 - `x`: Vector of reals.
 
 - `cut1`, `cut2`, `cut3`, `cut4`: Values of the original data that
-define where the desirability function changes.
+  define where the desirability function changes.
 
 - `des_min, des_max`: The lower and upper asymptotes of the
-function. Defaults to zero and one, respectively.
+  function. Defaults to zero and one, respectively.
 
 - `scale`: Controls how steeply the function increases or decreases.
 """
@@ -116,27 +116,27 @@ function d_central(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 
 end
 
 """
-        d_ends(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
+    d_ends(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
 
-    Maps a numeric variable to a 0-1 scale such that values at the
-    ends (both high and low) of the distribution are desirable. Values
-    less than `cut1` and greater than `cut4` will have a high
-    desirability. Values between `cut2` and `cut3` will have a low
-    desirability. Values between `cut1` and `cut2` and between `cut3`
-    and `cut4` will have intermediate values. This function is useful
-    when the data represent differences between groups, where both
-    high an low values are of interest.
+Maps a numeric variable to a 0-1 scale such that values at the
+ends (both high and low) of the distribution are desirable. Values
+less than `cut1` and greater than `cut4` will have a high
+desirability. Values between `cut2` and `cut3` will have a low
+desirability. Values between `cut1` and `cut2` and between `cut3`
+and `cut4` will have intermediate values. This function is useful
+when the data represent differences between groups, where both
+q  high an low values are of interest.
 
-    # Arguments
-    - `x`: Vector of reals.
+# Arguments
+- `x`: Vector of reals.
 
-    - `cut1`, `cut2`, `cut3`, `cut4`: Values of the original data that
-      define where the desirability function changes.
+- `cut1`, `cut2`, `cut3`, `cut4`: Values of the original data that
+  define where the desirability function changes.
 
-    - `des_min, des_max`: The lower and upper asymptotes of the
-      function. Defaults to zero and one, respectively.
+- `des_min, des_max`: The lower and upper asymptotes of the
+  function. Defaults to zero and one, respectively.
 
-    - `scale`: Controls how steeply the function increases or decreases.
+- `scale`: Controls how steeply the function increases or decreases.
 """
 function d_ends(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
 
@@ -174,24 +174,24 @@ function d_ends(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
 end
 
 """
-        d_high(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
+    d_high(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
 
-    Maps a numeric variable to a 0-1 scale such that high values are
-    desirable. Values less than `cut1` will have a low
-    desirability. Values greater than `cut2` will have a high
-    desirability. Values between `cut1` and `cut2` will have
-    intermediate values.
+Maps a numeric variable to a 0-1 scale such that high values are
+desirable. Values less than `cut1` will have a low
+desirability. Values greater than `cut2` will have a high
+desirability. Values between `cut1` and `cut2` will have
+intermediate values.
 
-    # Arguments
-    - `x`: Vector of reals.
+# Arguments
+- `x`: Vector of reals.
 
-    - `cut1`, `cut2`: Values of the original data that
-      define where the desirability function changes.
+- `cut1`, `cut2`: Values of the original data that
+  define where the desirability function changes.
 
-    - `des_min, des_max`: The lower and upper asymptotes of the
-      function. Defaults to zero and one, respectively.
+- `des_min, des_max`: The lower and upper asymptotes of the
+  function. Defaults to zero and one, respectively.
 
-    - `scale`: Controls how steeply the function increases or decreases.
+- `scale`: Controls how steeply the function increases or decreases.
 """
 function d_high(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
 
@@ -225,24 +225,24 @@ function d_high(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
 end
 
 """
-        d_low(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
+    d_low(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
 
-    Maps a numeric variable to a 0-1 scale such that low values are
-    desirable. Values less than `cut1` will have a high
-    desirability. Values greater than `cut2` will have a low
-    desirability. Values between `cut1` and `cut2` will have
-    intermediate values.
+Maps a numeric variable to a 0-1 scale such that low values are
+desirable. Values less than `cut1` will have a high
+desirability. Values greater than `cut2` will have a low
+desirability. Values between `cut1` and `cut2` will have
+intermediate values.
 
-    # Arguments
-    - `x`: Vector of reals.
+# Arguments
+- `x`: Vector of reals.
 
-    - `cut1`, `cut2`: Values of the original data that
-      define where the desirability function changes.
+- `cut1`, `cut2`: Values of the original data that
+  define where the desirability function changes.
 
-    - `des_min, des_max`: The lower and upper asymptotes of the
-      function. Defaults to zero and one, respectively.
+- `des_min, des_max`: The lower and upper asymptotes of the
+  function. Defaults to zero and one, respectively.
 
-    - `scale`: Controls how steeply the function increases or decreases.
+- `scale`: Controls how steeply the function increases or decreases.
 """
 function d_low(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
 
@@ -276,17 +276,17 @@ function d_low(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
 end
 
 """
-        d_overall(d; weights = nothing)
+    d_overall(d; weights = nothing)
 
-    Combines any number of desirability values into an overall desirability.
+Combines any number of desirability values into an overall desirability.
 
-    # Arguments
-    - `d`: A matrix of desirabilities. Rows are observations and columns
-      are desirabilities. Non-missing values must be a subtype of Real.
+# Arguments
+- `d`: A matrix of desirabilities. Rows are observations and columns
+  are desirabilities. Non-missing values must be a subtype of Real.
 
-    - `weights`: Allows some desirabilities to count for more in the overall calculation.
-      Defaults to equal weighting. If specified, must be a non-empty vector with elements
-      a subtype of Real.
+- `weights`: Allows some desirabilities to count for more in the overall calculation.
+  Defaults to equal weighting. If specified, must be a non-empty vector with elements
+  a subtype of Real.
 """
 function d_overall(d; weights = nothing)
 
@@ -319,21 +319,21 @@ function d_overall(d; weights = nothing)
 end
 
 """
-        d_rank(x; low_to_high = true, method = "ordinal")
+    d_rank(x; low_to_high = true, method = "ordinal")
 
-    Values are ranked from low to high or high to low,
-    and then the ranks are mapped to a 0-1 scale.
+Values are ranked from low to high or high to low,
+and then the ranks are mapped to a 0-1 scale.
 
-    # Arguments
-    - `x`: A non-empty vector. Non-missing elements must be a subtype of Real.
+# Arguments
+- `x`: A non-empty vector. Non-missing elements must be a subtype of Real.
 
-    - `low_to_high`: If true, low ranks have high desirabilities;
-      if false, high ranks have high desirabilities. Defaults to true.
+- `low_to_high`: If true, low ranks have high desirabilities;
+  if false, high ranks have high desirabilities. Defaults to true.
 
-    - `method`: What method should be used to rank x? Options include
-      ordinal, compete, dense, and tied. Note these are the same options
-      offered by ranking functions in StatsBase.jl (which this
-      funciton uses). See that package's documentation for more details.
+- `method`: What method should be used to rank x? Options include
+  ordinal, compete, dense, and tied. Note these are the same options
+  offered by ranking functions in StatsBase.jl (which this
+  funciton uses). See that package's documentation for more details.
 """
 function d_rank(x; low_to_high = true, method = "ordinal")
 
@@ -374,33 +374,33 @@ function d_rank(x; low_to_high = true, method = "ordinal")
 end
 
 """
-        des_line(x; des_func, des_args, plot_args...)
+    des_line(x; des_func, des_args, plot_args...)
 
-    Overlays a plot of any of the provided desirability functions given a vector
-    of data. Typically used with an existing histogram or density plot. Note
-    that users may have to adjust plotting paramaters of their original
-    graphic to ensure that it is aligned with the desirability function.
+Overlays a plot of any of the provided desirability functions given a vector
+of data. Typically used with an existing histogram or density plot. Note
+that users may have to adjust plotting paramaters of their original
+graphic to ensure that it is aligned with the desirability function.
 
-    # Arguments
-    - `x`: A non-empty vector. Non-missing elements must be
-      a subtype of Real.
+# Arguments
+- `x`: A non-empty vector. Non-missing elements must be
+  a subtype of Real.
 
-    - `des_func`: A string specifying which of the desirability
-      functions to use (i.e., des_func = "d_4pl"). "d_rank" is
-      also allowed.
+- `des_func`: A string specifying which of the desirability
+  functions to use (i.e., des_func = "d_4pl"). "d_rank" is
+  also allowed.
 
-    - `pos_args`: A tuple or vector specifying the positional
-      arguments passed to the desirability function of choice. Should
-      be ordered as they would be calling the original desirability function.
-      NOTE: this should exlude x, which is explicitly passed as the first
-      argument to des_line.
+- `pos_args`: A tuple or vector specifying the positional
+  arguments passed to the desirability function of choice. Should
+  be ordered as they would be calling the original desirability function.
+  NOTE: this should exlude x, which is explicitly passed as the first
+  argument to des_line.
 
-    - `key_args`: A named tuple specifying the keyword arguments
-      passed to the desirability function of choice. Recall that
-      named tuples with only one element must include a comma, i.e.
-      one might specify des_line(..., key_args = (scale = 2,)).
+- `key_args`: A named tuple specifying the keyword arguments
+  passed to the desirability function of choice. Recall that
+  named tuples with only one element must include a comma, i.e.
+  one might specify des_line(..., key_args = (scale = 2,)).
 
-    - `plot_args...`: Additional arguments for Plot.jl's plot function.
+- `plot_args...`: Additional arguments for Plot.jl's plot function.
 """
 function des_line(x; des_func, pos_args = nothing, key_args = nothing, plot_args...)
 
