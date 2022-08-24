@@ -30,7 +30,7 @@ function.
    value, the steeper the slope. 
 
 - `inflec`: Inflection point. Is the point on the x-axis where the
-   curvature of the function changes from concave upwards to concave\  
+   curvature of the function changes from concave upwards to concave  
    downwards (or vice versa).
 
 # Details 
