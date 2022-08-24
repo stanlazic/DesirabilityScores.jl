@@ -44,8 +44,8 @@ are desirable.
 # Examples 
 
 ```julia-repl
-my_data = [1,5,2,6,10,-3] 
-d_4pl(my_data; hill = 1, inflec = 5) 
+julia> my_data = [1,5,2,6,10,-3] 
+julia> d_4pl(my_data; hill = 1, inflec = 5) 
 ```
 
 """
