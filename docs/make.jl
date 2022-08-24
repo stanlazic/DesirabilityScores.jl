@@ -12,6 +12,8 @@ makedocs(;
     #    prettyurls=get(ENV, "CI", "false") == "true",
     #    assets=String[],
     #),
+    #format=Documenter.LaTeX(),
+    #format=Documenter.HTML(),
     format=Documenter.LaTeX(), 
     pages=[
         "Home" => "index.md",
