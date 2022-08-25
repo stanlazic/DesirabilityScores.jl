@@ -19,7 +19,10 @@ function.
 
 # Arguments
 
-- `x`: Vector whose elements are a subtype of `Real`.
+- `x`: Vector whose elements are a subtype of `Real`. Additionally, 
+   must be non-negative (the other functions offered here can process
+   negative inputs, but `d_4pl(...)` can map `x` to values outside of the
+   unit interval depending on parameter settings). 
 
 - `des_min, des_max`: The lower and upper asymptotes of the   
    function. Defaults to zero and one, respectively.
@@ -44,25 +47,25 @@ are desirable.
 # Examples 
 
 ```julia-repl
-julia> my_data = [1,3,4,0,-2,7,10] 
+julia> my_data = [1,3,4,0,2,7,10] 
 7-element Vector{Int64}:
   1
   3
   4
   0
- -2
+  2
   7
  10
 
 julia> d_4pl(my_data; hill = 1, inflec = 5)
 7-element Vector{Float64}:
-  0.16666666666666663
-  0.375
-  0.4444444444444444
-  0.0
- -0.6666666666666667
-  0.5833333333333333
-  0.6666666666666667 
+ 0.16666666666666663
+ 0.375
+ 0.4444444444444444
+ 0.0
+ 0.2857142857142857
+ 0.5833333333333333
+ 0.6666666666666667
 ```
 
 """
@@ -70,6 +73,7 @@ function d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
 
     skip_missing = collect(skipmissing(x))
     @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
+    @assert minimum(skip_missing) ≥ 0 "Input values must be non-negative." 
     @assert hill ≠ 0.0 "The Hill coefficient must not equal zero"
     @assert 0 ≤ des_min ≤ 1 "des_min must be between zero and one"
     @assert 0 ≤ des_max ≤ 1 "des_max must be between zero and one"
@@ -189,23 +193,23 @@ q  high an low values are of interest.
 # Examples 
 
 ```julia-repl 
-julia> d_ends(my_data, 0, 2, 4, 6; scale = 2)
-7-element Vector{Float64}:
- 0.25
- 0.0
- 0.0
- 1.0
- 1.0
- 1.0
- 1.0
+julia> my_data
+7-element Vector{Int64}:
+  1
+  3
+  4
+  0
+  2
+  7
+ 10
 
-julia> d_ends(my_data, 0, 2, 4, 6; scale = .5)
+julia> d_ends(my_data, 0, 2, 4, 6; scale = .5) 
 7-element Vector{Float64}:
  0.7071067811865476
  0.0
  0.0
  1.0
- 1.0
+ 0.0
  1.0
  1.0
  ```
@@ -406,6 +410,38 @@ Combines any number of desirability values into an overall desirability.
 - `weights`: Allows some desirabilities to count for more in the overall calculation.
   Defaults to equal weighting. If specified, must be a non-empty vector with elements
   a subtype of `Real`.
+
+```julia-repl  
+julia> d1 = d_4pl(my_data; hill = 1, inflec =5)
+7-element Vector{Float64}:
+ 0.16666666666666663
+ 0.375
+ 0.4444444444444444
+ 0.0
+ 0.2857142857142857
+ 0.5833333333333333
+ 0.6666666666666667
+
+julia> d2 = d_high(my_other_data, 2, 5)
+7-element Vector{Float64}:
+ 0.3333333333333333
+ 0.3333333333333333
+ 0.6666666666666666
+ 0.0
+ 0.6666666666666666
+ 0.0
+ 1.0
+
+julia> d_overall(hcat(d1, d2); weights = [1, 2]) 
+7-element Vector{Union{Missing, Float64}}:
+ 0.2645668419946999
+ 0.3466806371753174
+ 0.5823869764908659
+ 0.0
+ 0.5026316274194359
+ 0.0
+ 0.8735804647362989
+```
 """
 function d_overall(d; weights = nothing)
 
@@ -453,6 +489,28 @@ and then the ranks are mapped to a 0-1 scale.
   `ordinal`, `compete`, `dense`, and `tied`. Note these are the same options
   offered by ranking functions in `StatsBase.jl` (which this
   funciton uses). See that package's documentation for more details.
+
+```julia-repl
+julia> to_rank = [5,10,-4.5, 8, pi, exp(1), -100]
+7-element Vector{Float64}:
+    5.0
+   10.0
+   -4.5
+    8.0
+    3.141592653589793
+    2.718281828459045
+ -100.0
+
+julia> d_rank(to_rank; method = "compete") 
+7-element Vector{Float64}:
+ 0.3333333333333333
+ 0.0
+ 0.8333333333333334
+ 0.16666666666666666
+ 0.5
+ 0.6666666666666666
+ 1.0
+``` 
 """
 function d_rank(x; low_to_high = true, method = "ordinal")
 
@@ -493,7 +551,7 @@ function d_rank(x; low_to_high = true, method = "ordinal")
 end
 
 """
-    des_line(x; des_func, des_args, plot_args...)
+    des_line(x; des_func, pos_args, key_args, plot_args...)
 
 Overlays a plot of any of the provided desirability functions given a vector
 of data. Typically used with an existing histogram or density plot. Note
@@ -520,6 +578,20 @@ graphic to ensure that it is aligned with the desirability function.
   one might specify `des_line(..., key_args = (scale = 2,))`.
 
 - `plot_args...`: Additional arguments for `Plot.jl`'s plot function.
+
+```julia-repl
+julia> my_data = [1,3,4,0,2,7,10]
+7-element Vector{Int64}:
+  1
+  3
+  4
+  0
+  2
+  7
+ 10
+
+julia> des_line(my_data; des_func = "d_high", pos_args = (4,6), key_args = (scale=2,))
+```
 """
 function des_line(x; des_func, pos_args = nothing, key_args = nothing, plot_args...)
 

@@ -38,7 +38,8 @@ to_rank_missing = [2, 2, missing, 0, missing, 5, 7]
 
     @test test_values ≈ true_values atol = 0.001
     @test test_values_missing[1] === missing
-
+    
+    @test_throws AssertionError d_4pl([-1, 0, 3]; hill = 1, inflec = 1) 
     @test_throws AssertionError d_4pl(data; hill = 0, inflec = 10)
     @test_throws AssertionError d_4pl(data; hill = 1, inflec = 10, des_min = -1)
     @test_throws AssertionError d_4pl(data; hill = 1, inflec = 10, des_max = 2)
