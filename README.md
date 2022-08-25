@@ -4,11 +4,8 @@ This package is a port of the `desiR` R package ([https://cran.r-project.org/web
 
 The [vignette](https://cran.r-project.org/web/packages/desiR/vignettes/Gene_ranking.pdf) and [publication](https://peerj.com/articles/1444/) provide more details.
 
-### To Do 
-
-- Add error handling for negative inputsi (just discovered this...)! 
-- Add the remainder of ```julia REPL``` examples in docs. 
-- Oranize docs pdf. 
+## To Do 
+ 
 - Add data set as artifact. 
 
 <!-- [![Build Status](https://github.com/stanlazic/DesirabilityScores.jl/workflows/CI/badge.svg)](https://github.com/stanlazic/DesirabilityScores.jl/actions) -->
