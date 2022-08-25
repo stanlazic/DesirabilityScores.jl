@@ -411,6 +411,8 @@ Combines any number of desirability values into an overall desirability.
   Defaults to equal weighting. If specified, must be a non-empty vector with elements
   a subtype of `Real`.
 
+# Examples 
+
 ```julia-repl  
 julia> d1 = d_4pl(my_data; hill = 1, inflec =5)
 7-element Vector{Float64}:
@@ -489,6 +491,8 @@ and then the ranks are mapped to a 0-1 scale.
   `ordinal`, `compete`, `dense`, and `tied`. Note these are the same options
   offered by ranking functions in `StatsBase.jl` (which this
   funciton uses). See that package's documentation for more details.
+
+# Examples 
 
 ```julia-repl
 julia> to_rank = [5,10,-4.5, 8, pi, exp(1), -100]
@@ -579,19 +583,11 @@ graphic to ensure that it is aligned with the desirability function.
 
 - `plot_args...`: Additional arguments for `Plot.jl`'s plot function.
 
-```julia-repl
-julia> my_data = [1,3,4,0,2,7,10]
-7-element Vector{Int64}:
-  1
-  3
-  4
-  0
-  2
-  7
- 10
+# Examples 
 
-julia> des_line(my_data; des_func = "d_high", pos_args = (4,6), key_args = (scale=2,))
-```
+    my_data = [1,3,4,0,2,7,10]
+    des_line(my_data; des_func = "d_high", pos_args = (4,6), key_args = (scale=2,))
+
 """
 function des_line(x; des_func, pos_args = nothing, key_args = nothing, plot_args...)
 
