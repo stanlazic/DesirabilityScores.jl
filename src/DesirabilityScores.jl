@@ -2,6 +2,9 @@ module DesirabilityScores
 
 using StatsBase
 using Plots
+using Pkg.Artifacts  
+using CSV
+using DataFrames 
 
 export d_4pl
 export d_central
@@ -11,6 +14,14 @@ export d_low
 export d_overall
 export d_rank
 export des_line
+
+function __init__() 
+    
+    farmer_path = joinpath(artifact"farmer", "farmer2005.csv") 
+    farmer = CSV.read(farmer_path, DataFrame) 
+
+end 
+
 """
     d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
 
