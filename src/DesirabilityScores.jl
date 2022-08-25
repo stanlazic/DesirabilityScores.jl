@@ -212,7 +212,7 @@ julia> d_ends(my_data, 0, 2, 4, 6; scale = .5)
  0.0
  1.0
  1.0
- ```
+```
 """
 function d_ends(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
 
