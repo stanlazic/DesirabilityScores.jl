@@ -11,8 +11,6 @@ The [vignette](https://cran.r-project.org/web/packages/desiR/vignettes/Gene_rank
 
 Documentation for [DesirabilityScores](https://github.com/stanlazic/DesirabilityScores.jl).
 
-```@index
-```
 
 ```@autodocs
 Modules=[DesirabilityScores]
