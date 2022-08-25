@@ -15,6 +15,7 @@ makedocs(;
     #format=Documenter.HTML(),
     format=Documenter.LaTeX(), 
     pages=[
-        "index.md"
+        "Introduction" => "intro.md",     
+        "Exported Functions" => "index.md"
     ],
 )
