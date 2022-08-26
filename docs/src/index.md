@@ -12,6 +12,9 @@ Source code available on [GitHub](https://github.com/stanlazic/DesirabilityScore
 
 ### Exported Functions 
 
+```@index 
+``` 
+
 ```@autodocs
 Modules=[DesirabilityScores]
 ```
