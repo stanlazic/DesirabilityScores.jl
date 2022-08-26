@@ -4,9 +4,5 @@ This package is a port of the `desiR` R package ([https://cran.r-project.org/web
 
 The [vignette](https://cran.r-project.org/web/packages/desiR/vignettes/Gene_ranking.pdf) and [publication](https://peerj.com/articles/1444/) provide more details.
 
-## To Do 
- 
-- Add data set as artifact. 
-
 <!-- [![Build Status](https://github.com/stanlazic/DesirabilityScores.jl/workflows/CI/badge.svg)](https://github.com/stanlazic/DesirabilityScores.jl/actions) -->
 <!-- [![Coverage](https://codecov.io/gh/stanlazic/DesirabilityScores.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/stanlazic/DesirabilityScores.jl) -->

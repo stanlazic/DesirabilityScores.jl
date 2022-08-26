@@ -1,6 +1,7 @@
 using DesirabilityScores
 using Plots
 using Test
+using DataFrames 
 
 data = 1:20
 data_missing = Array{Union{Missing,Int64}}(undef, 20)
@@ -12,7 +13,7 @@ to_rank_missing = [2, 2, missing, 0, missing, 5, 7]
 
     farmer = des_data() 
 
-    @test typeof(farmer) == DataFrame.DataFrame  
+    @test typeof(farmer) == DataFrames.DataFrame  
     @test size(farmer) == (1000, 8) 
 
 end 
