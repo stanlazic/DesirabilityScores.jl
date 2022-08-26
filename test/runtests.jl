@@ -12,7 +12,7 @@ to_rank_missing = [2, 2, missing, 0, missing, 5, 7]
 
     farmer = des_data() 
 
-    @test typeof(farmer) == "DataFrame" 
+    @test typeof(farmer) == DataFrame.DataFrame  
     @test size(farmer) == (1000, 8) 
 
 end 
