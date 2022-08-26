@@ -6,6 +6,7 @@ using Pkg.Artifacts
 using CSV
 using DataFrames 
 
+export des_data 
 export d_4pl
 export d_central
 export d_ends
@@ -14,7 +15,6 @@ export d_low
 export d_overall
 export d_rank
 export des_line
-export des_data 
 
 """
     des_data() 
