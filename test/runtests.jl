@@ -8,6 +8,15 @@ data_missing[2:20] = 2:20
 to_rank = [2, 2, 1, 0, -1, 5, 7]
 to_rank_missing = [2, 2, missing, 0, missing, 5, 7]
 
+@testset "des_data" begin 
+
+    farmer = des_data() 
+
+    @test typeof(farmer) == "DataFrame" 
+    @test size(farmer) == (1000, 8) 
+
+end 
+
 @testset "d_4pl" begin
 
     test_values = d_4pl(data; hill = 1, inflec = 10)

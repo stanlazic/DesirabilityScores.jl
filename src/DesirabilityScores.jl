@@ -14,11 +14,20 @@ export d_low
 export d_overall
 export d_rank
 export des_line
+export des_data 
 
-function __init__() 
+"""
+    des_data() 
+
+Loads sample data based on [put paper link here]. Put more description
+here. 
+"""
+function des_data() 
     
     farmer_path = joinpath(artifact"farmer", "farmer2005.csv") 
     farmer = CSV.read(farmer_path, DataFrame) 
+    
+    return farmer 
 
 end 
 
