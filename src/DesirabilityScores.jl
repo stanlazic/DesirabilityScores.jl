@@ -19,8 +19,22 @@ export des_line
 """
     des_data() 
 
-Loads sample data based on [put paper link here]. Put more description
-here. 
+1000 randomly selected probesets from a breast cancer microarray dataset (Farmer et. al., 2005). 
+Returns a `DataFrames.DataFrame`. There are 1000 observations on 7 variables. 
+
+# Covariates 
+
+- `ProbeSet`: Affymetrix probesets from the U133A chip.
+- `GeneID`: Gene symbol.
+- `logFC`: Log2 fold change for the basal versus luminal comparison.
+- `AveExpr`: Mean expression across all samples.
+- `P.Value`: P-value for basal versus luminal comparison.
+- `SD`: Standard deviation across all samples. 
+- `PCNA.cor`: Correlation with PCNA (a marker of proliferating cells).
+
+# Details 
+
+These data are the results from an analysis comparing the basal and luminal samples. The apocrine samples are excluded.
 """
 function des_data() 
     

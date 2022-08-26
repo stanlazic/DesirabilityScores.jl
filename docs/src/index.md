@@ -15,3 +15,7 @@ Source code available on [GitHub](https://github.com/stanlazic/DesirabilityScore
 ```@autodocs
 Modules=[DesirabilityScores]
 ```
+
+### References 
+
+Farmer P, Bonnefoi H, Becette V, Tubiana-Hulin M, Fumoleau P, Larsimont D, Macgrogan G, Bergh J, Cameron D, Goldstein D, Duss S, Nicoulaz AL, Brisken C, Fiche M, Delorenzi M, Iggo R. Identification of molecular apocrine breast tumours by microarray analysis. Oncogene. 2005 24(29):4660-4671.
