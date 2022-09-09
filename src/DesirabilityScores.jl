@@ -40,7 +40,8 @@ function des_data()
     
     farmer_path = joinpath(artifact"farmer", "farmer2005.csv") 
     farmer = CSV.read(farmer_path, DataFrame) 
-    
+    farmer = farmer[,2:end] 
+
     return farmer 
 
 end 
@@ -600,8 +601,8 @@ graphic to ensure that it is aligned with the desirability function.
 - `x`: A non-empty vector. Non-missing elements must be
   a subtype of `Real`.
 
-- `des_func`: A string specifying which of the desirability
-  functions to use (i.e., `des_func = "d_4pl"`). `"d_rank"` is
+- `des_func`: A symbol specifying which of the desirability
+  functions to use (i.e., `des_func = :d_4pl`). `:d_rank` is
   also allowed.
 
 - `pos_args`: A tuple or vector specifying the positional
@@ -620,24 +621,24 @@ graphic to ensure that it is aligned with the desirability function.
 # Examples 
 
     my_data = [1,3,4,0,2,7,10]
-    des_line(my_data; des_func = "d_high", pos_args = (4,6), key_args = (scale=2,))
+    des_line(my_data; des_func = :d_high, pos_args = (4,6), key_args = (scale=2,))
 
 """
 function des_line(x; des_func, pos_args = nothing, key_args = nothing, plot_args...)
 
     skip_missing = collect(skipmissing(x))
     @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
-    @assert des_func in ["d_4pl", "d_central", "d_ends", "d_high", "d_low", "d_rank"]
+    @assert des_func in [:d_4pl, :d_central, :d_ends, :d_high, :d_low, :d_rank]
     "des_func must be one of the provided desiarability functions."
     if key_args != nothing
         @assert key_args isa NamedTuple "key_args must be a named tuple"
     end
 
-    if des_func == "d_4pl"
+    if des_func == :d_4pl
         @assert :hill in collect(keys(key_args)) "hill paramter must be specified (no default value)"
         @assert :inflec in collect(keys(key_args)) "inflec parameter must be specified (no default value)"
         y = d_4pl(x; key_args...)
-    elseif des_func == "d_central" || des_func == "d_ends"
+    elseif des_func == :d_central || des_func == :d_ends
         @assert pos_args != nothing "No cuts specified"
         @assert length(pos_args) == 4 "Incorrect number of cuts specified"
         if key_args != nothing
@@ -645,7 +646,7 @@ function des_line(x; des_func, pos_args = nothing, key_args = nothing, plot_args
         else
             y = getfield(Main, Symbol(des_func))(x, pos_args...)
         end
-    elseif des_func == "d_high" || des_func == "d_low"
+    elseif des_func == :d_high || des_func == :d_low
         @assert pos_args != nothing "No cuts specified"
         @assert length(pos_args) == 2 "Incorrect number of cuts specified"
         if key_args != nothing
@@ -653,7 +654,7 @@ function des_line(x; des_func, pos_args = nothing, key_args = nothing, plot_args
         else
             y = getfield(Main, Symbol(des_func))(x, pos_args...)
         end
-    elseif des_func == "d_rank"
+    elseif des_func == :d_rank
         if key_args == nothing
             y = d_rank(x)
         else
