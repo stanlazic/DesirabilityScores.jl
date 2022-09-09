@@ -40,7 +40,7 @@ function des_data()
     
     farmer_path = joinpath(artifact"farmer", "farmer2005.csv") 
     farmer = CSV.read(farmer_path, DataFrame) 
-    farmer = farmer[,2:end] 
+    farmer = farmer[:,2:end] 
 
     return farmer 
 
