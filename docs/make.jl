@@ -5,7 +5,7 @@ using Documenter
 
 makedocs(;
     modules=[DesirabilityScores],
-    authors="Stanley E. Lazic",
+    authors="Stanley E. Lazic, Gabriel C. Phelan",
     repo="https://github.com/stanlazic/DesirabilityScores.jl/blob/{commit}{path}#{line}",
     sitename="DesirabilityScores.jl",
     #format=Documenter.HTML(;

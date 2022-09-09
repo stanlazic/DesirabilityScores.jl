@@ -511,7 +511,7 @@ function d_overall(d; weights = nothing)
 end
 
 """
-    d_rank(x; low_to_high = true, method = "ordinal")
+    d_rank(x; low_to_high = true, method = :ordinal)
 
 Values are ranked from low to high or high to low,
 and then the ranks are mapped to a 0-1 scale.
