@@ -522,8 +522,8 @@ and then the ranks are mapped to a 0-1 scale.
 - `low_to_high`: If `true`, low ranks have high desirabilities;
   if `false`, high ranks have high desirabilities. Defaults to `true`.
 
-- `method`: What method should be used to rank x? Options include
-  `ordinal`, `compete`, `dense`, and `tied`. Note these are the same options
+- `method`: A symbol specifying the method that should be used to rank x. Options include
+  `:ordinal`, `:compete`, `:dense`, and `:tied`. Note these are the same options
   offered by ranking functions in `StatsBase.jl` (which this
   funciton uses). See that package's documentation for more details.
 
@@ -540,7 +540,7 @@ julia> to_rank = [5,10,-4.5, 8, pi, exp(1), -100]
     2.718281828459045
  -100.0
 
-julia> d_rank(to_rank; method = "compete") 
+julia> d_rank(to_rank; method = :compete) 
 7-element Vector{Float64}:
  0.3333333333333333
  0.0
@@ -551,10 +551,10 @@ julia> d_rank(to_rank; method = "compete")
  1.0
 ``` 
 """
-function d_rank(x; low_to_high = true, method = "ordinal")
+function d_rank(x; low_to_high = true, method = :ordinal)
 
     @assert low_to_high isa Bool "low_to_high must be of type Bool."
-    @assert method in ["ordinal", "compete", "dense", "tied"] "method must be one of: ordinal, compete, dense, tied"
+    @assert method in [:ordinal, :compete, :dense, :tied] "method must be one of: ordinal, compete, dense, tied"
     skip_missing = collect(skipmissing(x))
     which_missing = findall(ismissing, x)
     num_missing = length(which_missing)
@@ -567,13 +567,13 @@ function d_rank(x; low_to_high = true, method = "ordinal")
     # "tied" = "average" in R
     # "compete" = "min" in R
     # "dense" has no equivalent in R
-    if method == "ordinal"
+    if method == :ordinal
         y = ordinalrank(x)
-    elseif method == "compete"
+    elseif method == :compete
         y = competerank(x)
-    elseif method == "dense"
+    elseif method == :dense
         y = denserank(x)
-    elseif method == "tied"
+    elseif method == :tied
         y = tiedrank(x)
     end
 

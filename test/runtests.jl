@@ -14,7 +14,7 @@ to_rank_missing = [2, 2, missing, 0, missing, 5, 7]
     farmer = des_data() 
 
     @test typeof(farmer) == DataFrames.DataFrame  
-    @test size(farmer) == (1000, 8) 
+    @test size(farmer) == (1000, 7) 
 
 end 
 
@@ -283,11 +283,11 @@ end
 
 @testset "d_rank" begin
 
-    test_values_ordinal = d_rank(to_rank; method = "ordinal")
-    test_values_tied = d_rank(to_rank; method = "tied")
-    test_values_compete = d_rank(to_rank; method = "compete")
-    test_values_missing = d_rank(to_rank_missing; method = "ordinal")
-    test_values_reversed = d_rank(to_rank; low_to_high = false, method = "ordinal")
+    test_values_ordinal = d_rank(to_rank; method = :ordinal)
+    test_values_tied = d_rank(to_rank; method = :tied)
+    test_values_compete = d_rank(to_rank; method = :compete)
+    test_values_missing = d_rank(to_rank_missing; method = :ordinal)
+    test_values_reversed = d_rank(to_rank; low_to_high = false, method = :ordinal)
 
     true_values_ordinal =
         [0.5000000, 0.3333333, 0.6666667, 0.8333333, 1.0000000, 0.1666667, 0.0000000]
@@ -308,24 +308,24 @@ end
 
     @test_throws AssertionError d_rank(["a", "b", "c"])
     @test_throws AssertionError d_rank(to_rank; low_to_high = 1)
-    @test_throws AssertionError d_rank(to_rank; method = "abc")
+    @test_throws AssertionError d_rank(to_rank; method = :abc)
 
 end
 
 @testset "des_line" begin
 
     plots = Array{Any}(missing, 6)
-    plots[1] = des_line(data; des_func = "d_4pl", key_args = (hill = 1, inflec = 10))
-    plots[2] = des_line(data; des_func = "d_central", pos_args = (5, 10, 15, 20))
+    plots[1] = des_line(data; des_func = :d_4pl, key_args = (hill = 1, inflec = 10))
+    plots[2] = des_line(data; des_func = :d_central, pos_args = (5, 10, 15, 20))
     plots[3] = des_line(
         data;
-        des_func = "d_ends",
+        des_func = :d_ends,
         pos_args = (5, 10, 15, 20),
         key_args = (scale = 5, des_min = 0.5, des_max = 0.7),
     )
-    plots[4] = des_line(data; des_func = "d_high", pos_args = (7.5, 12.5))
-    plots[5] = des_line(data; des_func = "d_low", pos_args = (7.5, 12.5))
-    plots[6] = des_line(data; des_func = "d_rank", key_args = (method = "tied",))
+    plots[4] = des_line(data; des_func = :d_high, pos_args = (7.5, 12.5))
+    plots[5] = des_line(data; des_func = :d_low, pos_args = (7.5, 12.5))
+    plots[6] = des_line(data; des_func = :d_rank, key_args = (method = :tied,))
 
     for i = 1:6
         @test typeof(plots[i]) <: Plots.Plot
@@ -333,30 +333,30 @@ end
 
     @test_throws AssertionError des_line(
         ["a", "b"];
-        des_func = "d_4pl",
+        des_func = :d_4pl,
         pos_args = (5, 10, 15, 20),
     )
-    @test_throws AssertionError des_line(data; des_func = "abc", pos_args = (5, 10, 15, 20))
+    @test_throws AssertionError des_line(data; des_func = :abc, pos_args = (5, 10, 15, 20))
     @test_throws AssertionError des_line(
         data;
-        des_func = "d_4pl",
+        des_func = :d_4pl,
         key_args = (des_min = 0.2, des_max = 0.7),
     )
-    @test_throws AssertionError des_line(data; des_func = "d_ends", pos_args = (5, 10, 15))
+    @test_throws AssertionError des_line(data; des_func = :d_ends, pos_args = (5, 10, 15))
     @test_throws AssertionError des_line(
         data;
-        des_func = "d_central",
+        des_func = :d_central,
         pos_args = (5, 10, 15, 20),
         key_args = (0.5, 0.7),
     )
-    @test_throws AssertionError des_line(data; des_func = "d_high", pos_args = 7.5)
+    @test_throws AssertionError des_line(data; des_func = :d_high, pos_args = 7.5)
     @test_throws AssertionError des_line(
         data;
-        des_func = "d_low",
+        des_func = :d_low,
         pos_args = (7.5, 12.5),
         key_args = (scale = 4),
     )
-    @test_throws AssertionError des_line(data; des_func = "d_central")
-    @test_throws AssertionError des_line(data; des_func = "d_low", key_args = (scale = 3,))
+    @test_throws AssertionError des_line(data; des_func = :d_central)
+    @test_throws AssertionError des_line(data; des_func = :d_low, key_args = (scale = 3,))
 
 end
