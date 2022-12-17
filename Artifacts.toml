@@ -3,5 +3,5 @@ git-tree-sha1 = "a421737242baa8535e159fae7105379bbeea4b8f"
 
     [[farmer.download]]
     sha256 = "c3805c0e6f017734ef2ed5675351cc10a4d85b4ebb747c1bfefc28061205f65d"
-    url = "https://github.com/gabe-phelan/DataForPackages/blob/main/farmer2005_again.tar.gz"
+    url = "https://github.com/gabe-phelan/DataForPackages/raw/main/farmer2005_again.tar.gz"
 

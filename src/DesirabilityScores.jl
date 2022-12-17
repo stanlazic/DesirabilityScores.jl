@@ -2,6 +2,7 @@ module DesirabilityScores
 
 using StatsBase
 using Plots
+using Plots.PlotMeasures
 using Pkg.Artifacts  
 using CSV
 using DataFrames 
@@ -14,33 +15,41 @@ export d_high
 export d_low
 export d_overall
 export d_rank
-export des_line
+export des_plot
 
 """
     des_data() 
 
-1000 randomly selected probesets from a breast cancer microarray dataset (Farmer et. al., 2005). 
-Returns a `DataFrames.DataFrame`. There are 1000 observations on 7 variables. 
+1000 randomly selected probesets from a breast cancer microarray
+dataset (Farmer et. al., 2005).  Returns a `DataFrames.DataFrame`,
+with 1000 observations and 7 variables.
 
 # Covariates 
 
 - `ProbeSet`: Affymetrix probesets from the U133A chip.
+
 - `GeneID`: Gene symbol.
+
 - `logFC`: Log2 fold change for the basal versus luminal comparison.
+
 - `AveExpr`: Mean expression across all samples.
+
 - `P.Value`: P-value for basal versus luminal comparison.
-- `SD`: Standard deviation across all samples. 
+
+- `SD`: Standard deviation across all samples.
+
 - `PCNA.cor`: Correlation with PCNA (a marker of proliferating cells).
 
 # Details 
 
-These data are the results from an analysis comparing the basal and luminal samples. The apocrine samples are excluded.
+These data are the results from an analysis comparing the basal and
+luminal samples. The apocrine samples are excluded.
 """
 function des_data() 
     
     farmer_path = joinpath(artifact"farmer", "farmer2005.csv") 
     farmer = CSV.read(farmer_path, DataFrame) 
-    farmer = farmer[:,2:end] 
+    farmer = farmer[:, 2:end] 
 
     return farmer 
 
@@ -54,30 +63,31 @@ function.
 
 # Arguments
 
-- `x`: Vector whose elements are a subtype of `Real`. Additionally, 
-   must be non-negative (the other functions offered here can process
-   negative inputs, but `d_4pl(...)` can map `x` to values outside of the
-   unit interval depending on parameter settings). 
+- `x`: Vector of values to map whose elements are a subtype of
+   `Real`. Additionally, must be non-negative (the other functions
+   offered here can process negative inputs, but `d_4pl(...)` can map
+   `x` to values outside of the unit interval depending on parameter
+   settings).
 
-- `des_min, des_max`: The lower and upper asymptotes of the   
+- `des_min, des_max`: The lower and upper asymptotes of the
    function. Defaults to zero and one, respectively.
 
-- `hill`: Hill coefficient. It controls the steepness and direction of  
+- `hill`: Hill coefficient. It controls the steepness and direction of
    the slope. A value greater than zero has a positive slope and a
-   value less than zero has a negative slope. The higher the absolute  
-   value, the steeper the slope. 
+   value less than zero has a negative slope. The higher the absolute
+   value, the steeper the slope.
 
 - `inflec`: Inflection point. Is the point on the x-axis where the
-   curvature of the function changes from concave upwards to concave  
+   curvature of the function changes from concave upwards to concave
    downwards (or vice versa).
 
 # Details 
 
-This function uses a four parameter logistic model to map a
-numeric variable onto a 0-1 scale. Whether high or low values are  
-deemed desirable can be controlled with the `hill` parameter; when  
-`hill` > 0 high values are desirable and when `hill` < 0 low values  
-are desirable. 
+This function uses a four parameter logistic model to map a numeric
+variable onto a 0-1 scale. Whether high or low values are deemed
+desirable can be controlled with the `hill` parameter; when `hill` > 0
+high values are desirable and when `hill` < 0 low values are
+desirable.
 
 # Examples 
 
@@ -119,6 +129,7 @@ function d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
 
 end
 
+
 """
     d_central(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
 
@@ -133,7 +144,7 @@ allowable ranges. If `cut2` and `cut3` are close to each other,
 this function can be used when a target value is desirable.
 
 # Arguments
-- `x`: Vector whose elements are a subtype of `Real`. 
+- `x`: Vector of values to map whose elements are a subtype of `Real`.
 
 - `cut1`, `cut2`, `cut3`, `cut4`: Values of the original data that
   define where the desirability function changes.
@@ -205,17 +216,17 @@ end
 """
     d_ends(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
 
-Maps a numeric variable to a 0-1 scale such that values at the
-ends (both high and low) of the distribution are desirable. Values
-less than `cut1` and greater than `cut4` will have a high
-desirability. Values between `cut2` and `cut3` will have a low
-desirability. Values between `cut1` and `cut2` and between `cut3`
-and `cut4` will have intermediate values. This function is useful
-when the data represent differences between groups, where both
-q  high an low values are of interest.
+Maps a numeric variable to a 0-1 scale such that values at the ends
+(both high and low) of the distribution are desirable. Values less
+than `cut1` and greater than `cut4` will have a high desirability.
+Values between `cut2` and `cut3` will have a low desirability. Values
+between `cut1` and `cut2` and between `cut3` and `cut4` will have
+intermediate values. This function is useful when the data represent
+differences between groups, where both high and low values are of
+interest.
 
 # Arguments
-- `x`: Vector whose elements are a subtype of `Real`. 
+- `x`: Vector of values to map whose elements are a subtype of `Real`. 
 
 - `cut1`, `cut2`, `cut3`, `cut4`: Values of the original data that
   define where the desirability function changes.
@@ -294,10 +305,10 @@ desirability. Values between `cut1` and `cut2` will have
 intermediate values.
 
 # Arguments
-- `x`: Vector whose elements are a subtype of `Real`. 
+- `x`: Vector of values to map whose elements are a subtype of `Real`.
 
-- `cut1`, `cut2`: Values of the original data that
-  define where the desirability function changes.
+- `cut1`, `cut2`: Values of the original data that define where the
+  desirability function changes.
 
 - `des_min, des_max`: The lower and upper asymptotes of the
   function. Defaults to zero and one, respectively.
@@ -369,7 +380,7 @@ desirability. Values between `cut1` and `cut2` will have
 intermediate values.
 
 # Arguments
-- `x`: Vector whose values are a subtype of `Real`. 
+- `x`: Vector of values to map whose values are a subtype of `Real`. 
 
 - `cut1`, `cut2`: Values of the original data that
   define where the desirability function changes.
@@ -442,9 +453,9 @@ Combines any number of desirability values into an overall desirability.
 - `d`: A matrix of desirabilities. Rows are observations and columns
   are desirabilities. Non-missing values must be a subtype of `Real`.
 
-- `weights`: Allows some desirabilities to count for more in the overall calculation.
-  Defaults to equal weighting. If specified, must be a non-empty vector with elements
-  a subtype of `Real`.
+- `weights`: Allows some desirabilities to count for more in the
+  overall calculation.  Defaults to equal weighting. If specified,
+  must be a non-empty vector with elements a subtype of `Real`.
 
 # Examples 
 
@@ -513,19 +524,21 @@ end
 """
     d_rank(x; low_to_high = true, method = :ordinal)
 
-Values are ranked from low to high or high to low,
-and then the ranks are mapped to a 0-1 scale.
+Values are ranked from low to high or high to low, and then the ranks
+are mapped to a 0-1 scale.
 
 # Arguments
-- `x`: A non-empty vector. Non-missing elements must be a subtype of `Real`.
+- `x`: A non-empty vector of values to map. Non-missing elements must
+  be a subtype of `Real`.
 
-- `low_to_high`: If `true`, low ranks have high desirabilities;
-  if `false`, high ranks have high desirabilities. Defaults to `true`.
+- `low_to_high`: If `true`, low ranks have high desirabilities; if
+  `false`, high ranks have high desirabilities. Defaults to `true`.
 
-- `method`: A symbol specifying the method that should be used to rank x. Options include
-  `:ordinal`, `:compete`, `:dense`, and `:tied`. Note these are the same options
-  offered by ranking functions in `StatsBase.jl` (which this
-  funciton uses). See that package's documentation for more details.
+- `method`: A symbol specifying the method that should be used to rank
+  x. Options include `:ordinal`, `:compete`, `:dense`, and
+  `:tied`. Note these are the same options offered by ranking
+  functions in `StatsBase.jl` (which this function uses). See that
+  package's documentation for more details.
 
 # Examples 
 
@@ -590,82 +603,47 @@ function d_rank(x; low_to_high = true, method = :ordinal)
 end
 
 """
-    des_line(x; des_func, pos_args, key_args, plot_args...)
+    des_plot(x, y; des_line_col = :black, des_line_width = 3, hist_args...)
 
-Overlays a plot of any of the provided desirability functions given a vector
-of data. Typically used with an existing histogram or density plot. Note
-that users may have to adjust plotting paramaters of their original
-graphic to ensure that it is aligned with the desirability function.
+Plots a histogram and overlays the desirability scores.
 
 # Arguments
-- `x`: A non-empty vector. Non-missing elements must be
-  a subtype of `Real`.
+- `x`: A non-empty vector of values to map. Non-missing elements must
+  be a subtype of `Real`.
 
-- `des_func`: A symbol specifying which of the desirability
-  functions to use (i.e., `des_func = :d_4pl`). `:d_rank` is
-  also allowed.
+- `y`: A non-empty vector of desirability scores.
 
-- `pos_args`: A tuple or vector specifying the positional
-  arguments passed to the desirability function of choice. Should
-  be ordered as they would be calling the original desirability function.
-  NOTE: this should exlude `x`, which is explicitly passed as the first
-  argument to des_line.
+- `des_line_col`: A string or symbol specifying color of the line.
 
-- `key_args`: A named tuple specifying the keyword arguments
-  passed to the desirability function of choice. Recall that
-  named tuples with only one element must include a comma, i.e.
-  one might specify `des_line(..., key_args = (scale = 2,))`.
+- `des_line_width`: An integer specifying the line width.
 
-- `plot_args...`: Additional arguments for `Plot.jl`'s plot function.
+- `hist_args...`: Additional arguments for the `Plot.jl`'s
+  `histogram()` function.
 
 # Examples 
+```julia-repl
+    x = sort(randn(1000))
+    y = d_high(x, -1, 1; des_min = 0.1, des_max = 0.8, scale = 2)
 
-    my_data = [1,3,4,0,2,7,10]
-    des_line(my_data; des_func = :d_high, pos_args = (4,6), key_args = (scale=2,))
-
+    des_plot(x, y, des_line_col = :orange1; color = :steelblue)
+```
 """
-function des_line(x; des_func, pos_args = nothing, key_args = nothing, plot_args...)
+function des_plot(x, y; des_line_col = :black, des_line_width = 3, hist_args...)
 
-    skip_missing = collect(skipmissing(x))
-    @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
-    @assert des_func in [:d_4pl, :d_central, :d_ends, :d_high, :d_low, :d_rank]
-    "des_func must be one of the provided desiarability functions."
-    if key_args != nothing
-        @assert key_args isa NamedTuple "key_args must be a named tuple"
-    end
+    # create the histogram
+    p = histogram(x, label = false; right_margin = 15mm, hist_args...)
 
-    if des_func == :d_4pl
-        @assert :hill in collect(keys(key_args)) "hill paramter must be specified (no default value)"
-        @assert :inflec in collect(keys(key_args)) "inflec parameter must be specified (no default value)"
-        y = d_4pl(x; key_args...)
-    elseif des_func == :d_central || des_func == :d_ends
-        @assert pos_args != nothing "No cuts specified"
-        @assert length(pos_args) == 4 "Incorrect number of cuts specified"
-        if key_args != nothing
-            y = getfield(Main, Symbol(des_func))(x, pos_args...; key_args...)
-        else
-            y = getfield(Main, Symbol(des_func))(x, pos_args...)
-        end
-    elseif des_func == :d_high || des_func == :d_low
-        @assert pos_args != nothing "No cuts specified"
-        @assert length(pos_args) == 2 "Incorrect number of cuts specified"
-        if key_args != nothing
-            y = getfield(Main, Symbol(des_func))(x, pos_args...; key_args...)
-        else
-            y = getfield(Main, Symbol(des_func))(x, pos_args...)
-        end
-    elseif des_func == :d_rank
-        if key_args == nothing
-            y = d_rank(x)
-        else
-            y = d_rank(x; key_args...)
-        end
-    end
+    # extract the maximum y-value
+    y_axis_values = p[1][1][:y]
+    max_y = maximum(filter(!isnan, y_axis_values))
 
-    p = plot!(y, plot_args...)
+    # add desirability line
+    p = plot!(x, y * max_y, color = des_line_col, lw = des_line_width, label = false)
 
-    return p
-
+    ## add second y-axis
+    p = plot!(twinx(), [0, 0], label = false, ylim = (0, 1), ylabel = "Desirability")
+    display(p)
 end
+
 
 end # end of module

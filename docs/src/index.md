@@ -21,4 +21,6 @@ Modules=[DesirabilityScores]
 
 ### References 
 
-Farmer P, Bonnefoi H, Becette V, Tubiana-Hulin M, Fumoleau P, Larsimont D, Macgrogan G, Bergh J, Cameron D, Goldstein D, Duss S, Nicoulaz AL, Brisken C, Fiche M, Delorenzi M, Iggo R. Identification of molecular apocrine breast tumours by microarray analysis. Oncogene. 2005 24(29):4660-4671.
+Farmer P, Bonnefoi H, Becette V, Tubiana-Hulin M, Fumoleau P, Larsimont D, Macgrogan G, Bergh J, Cameron D, Goldstein D, Duss S, Nicoulaz AL, Brisken C, Fiche M, Delorenzi M, Iggo R. Identification of molecular apocrine breast tumours by microarray analysis. *Oncogene*. 2005 24(29):4660-4671.
+
+Lazic SE (2015). Ranking, selecting, and prioritising genes with desirability functions. *PeerJ* 3:e1444.
