@@ -2,6 +2,7 @@ using DesirabilityScores
 using Plots
 using Test
 using DataFrames 
+using Random 
 
 data = 1:20
 data_missing = Array{Union{Missing,Int64}}(undef, 20)
@@ -312,51 +313,31 @@ end
 
 end
 
-@testset "des_line" begin
+@testset "des_plot" begin
 
-    plots = Array{Any}(missing, 6)
-    plots[1] = des_line(data; des_func = :d_4pl, key_args = (hill = 1, inflec = 10))
-    plots[2] = des_line(data; des_func = :d_central, pos_args = (5, 10, 15, 20))
-    plots[3] = des_line(
-        data;
-        des_func = :d_ends,
-        pos_args = (5, 10, 15, 20),
-        key_args = (scale = 5, des_min = 0.5, des_max = 0.7),
-    )
-    plots[4] = des_line(data; des_func = :d_high, pos_args = (7.5, 12.5))
-    plots[5] = des_line(data; des_func = :d_low, pos_args = (7.5, 12.5))
-    plots[6] = des_line(data; des_func = :d_rank, key_args = (method = :tied,))
+    plots = Array{Any}(missing, 5)
+    #data = shuffle(data) 
+    #data_missing = shuffle(data_missing)  
+    scores = d_4pl(data; hill = 1, inflec = 10)
+    scores_missing = d_4pl(data_missing; hill = 1, inflec = 10) 
+    
+    plots[1] = des_plot(data, scores) 
+    plots[2] = des_plot(data_missing, scores_missing) 
+    plots[3] = des_plot(tuple(data...), scores) 
+    plots[4] = des_plot(tuple(data...), tuple(scores...)) 
+    plots[5] = des_plot(data, tuple(scores...)) 
+    
+    for i in 1:5
+        @test typeof(plots[i]) <: Plots.plot
+    end 
 
-    for i = 1:6
-        @test typeof(plots[i]) <: Plots.Plot
-    end
-
-    @test_throws AssertionError des_line(
-        ["a", "b"];
-        des_func = :d_4pl,
-        pos_args = (5, 10, 15, 20),
-    )
-    @test_throws AssertionError des_line(data; des_func = :abc, pos_args = (5, 10, 15, 20))
-    @test_throws AssertionError des_line(
-        data;
-        des_func = :d_4pl,
-        key_args = (des_min = 0.2, des_max = 0.7),
-    )
-    @test_throws AssertionError des_line(data; des_func = :d_ends, pos_args = (5, 10, 15))
-    @test_throws AssertionError des_line(
-        data;
-        des_func = :d_central,
-        pos_args = (5, 10, 15, 20),
-        key_args = (0.5, 0.7),
-    )
-    @test_throws AssertionError des_line(data; des_func = :d_high, pos_args = 7.5)
-    @test_throws AssertionError des_line(
-        data;
-        des_func = :d_low,
-        pos_args = (7.5, 12.5),
-        key_args = (scale = 4),
-    )
-    @test_throws AssertionError des_line(data; des_func = :d_central)
-    @test_throws AssertionError des_line(data; des_func = :d_low, key_args = (scale = 3,))
+    @test_throws AssertionError des_plot(data, scores; des_line_col = :not_a_color, des_line_width = 3) 
+    @test_throws AssertionError des_plot(data, scores; des_line_col = :blue, des_line_width = :not_a_number) 
+    @test_throws AssertionError des_plot(['a', 'b', 'c'], scores) 
+    @test_throws AssertionError des_plot(data, ['a', 'b', 'c']) 
+    @test_throws AssertionError des_plot(data, scores[2:end]) 
+    @test_throws AssertionError des_line(data[2:end], scores) 
+    @test_throws AssertionError des_line(2,2) 
+    @test_throws AssertionError des_line([data; 'a'], [scores; 'b']) 
 
 end

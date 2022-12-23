@@ -5,3 +5,4 @@
 /docs/build/
 farmer2005.csv 
 farmer.tar.gz
+/src/.JuliaFormatter.jl

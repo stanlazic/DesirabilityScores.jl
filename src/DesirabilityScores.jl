@@ -3,11 +3,11 @@ module DesirabilityScores
 using StatsBase
 using Plots
 using Plots.PlotMeasures
-using Pkg.Artifacts  
+using Pkg.Artifacts
 using CSV
-using DataFrames 
+using DataFrames
 
-export des_data 
+export des_data
 export d_4pl
 export d_central
 export d_ends
@@ -45,15 +45,15 @@ with 1000 observations and 7 variables.
 These data are the results from an analysis comparing the basal and
 luminal samples. The apocrine samples are excluded.
 """
-function des_data() 
-    
-    farmer_path = joinpath(artifact"farmer", "farmer2005.csv") 
-    farmer = CSV.read(farmer_path, DataFrame) 
-    farmer = farmer[:, 2:end] 
+function des_data()
 
-    return farmer 
+    farmer_path = joinpath(artifact"farmer", "farmer2005.csv")
+    farmer = CSV.read(farmer_path, DataFrame)
+    farmer = farmer[:, 2:end]
 
-end 
+    return farmer
+
+end
 
 """
     d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
@@ -118,7 +118,7 @@ function d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
 
     skip_missing = collect(skipmissing(x))
     @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
-    @assert minimum(skip_missing) ≥ 0 "Input values must be non-negative." 
+    @assert minimum(skip_missing) ≥ 0 "Input values must be non-negative."
     @assert hill ≠ 0.0 "The Hill coefficient must not equal zero"
     @assert 0 ≤ des_min ≤ 1 "des_min must be between zero and one"
     @assert 0 ≤ des_max ≤ 1 "des_max must be between zero and one"
@@ -190,9 +190,9 @@ function d_central(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 
     @assert scale > 0 "scale must be greater than zero"
 
     # vector to hold results
-    y = similar(x, Union{Float64,Missing})
+    y = similar(x, Union{Float64, Missing})
 
-    for i = 1:size(x, 1)
+    for i in 1:size(x, 1)
         if ismissing(x[i])
             y[i] = missing
         elseif x[i] ≤ cut1 || x[i] ≥ cut4
@@ -272,9 +272,9 @@ function d_ends(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
     @assert scale > 0 "scale must be greater than zero"
 
     # vector to hold results
-    y = similar(x, Union{Float64,Missing})
+    y = similar(x, Union{Float64, Missing})
 
-    for i = 1:size(x, 1)
+    for i in 1:size(x, 1)
         if ismissing(x[i])
             y[i] = missing
         elseif x[i] ≤ cut1 || x[i] ≥ cut4
@@ -349,9 +349,9 @@ function d_high(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
     @assert scale > 0 "scale must be greater than zero"
 
     # vector to hold results
-    y = similar(x, Union{Float64,Missing})
+    y = similar(x, Union{Float64, Missing})
 
-    for i = 1:size(x, 1)
+    for i in 1:size(x, 1)
         if ismissing(x[i])
             y[i] = missing
         elseif x[i] < cut1
@@ -423,9 +423,9 @@ function d_low(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
     @assert scale > 0 "scale must be greater than zero"
 
     # vector to hold results
-    y = similar(x, Union{Float64,Missing})
+    y = similar(x, Union{Float64, Missing})
 
-    for i = 1:size(x, 1)
+    for i in 1:size(x, 1)
         if ismissing(x[i])
             y[i] = missing
         elseif x[i] < cut1
@@ -508,9 +508,9 @@ function d_overall(d; weights = nothing)
     end
 
     # vector for the results
-    y = similar(d[:, 1], Union{Float64,Missing})
+    y = similar(d[:, 1], Union{Float64, Missing})
 
-    for i = 1:size(d, 1)
+    for i in 1:size(d, 1)
         desire = d[i, :]
         numer = sum(skipmissing(@. log(desire) * weights))
         denom = sum(weights)
@@ -609,9 +609,12 @@ Plots a histogram and overlays the desirability scores.
 
 # Arguments
 - `x`: A non-empty vector of values to map. Non-missing elements must
-  be a subtype of `Real`.
+  be a subtype of `Real`. Need not be sorted -- this is done before 
+  passing to the plotting function. 
 
-- `y`: A non-empty vector of desirability scores.
+- `y`: A non-empty vector of desirability scores. Need not be sorted, 
+  but must be in the proper order with respect to x (i.e., datum `x[1]` 
+  has desirability `y[1]`. 
 
 - `des_line_col`: A string or symbol specifying color of the line.
 
@@ -630,6 +633,10 @@ Plots a histogram and overlays the desirability scores.
 """
 function des_plot(x, y; des_line_col = :black, des_line_width = 3, hist_args...)
 
+    # sort x and y appropriately 
+    y = y[sortperm(x)] 
+    x = sort(x) 
+
     # create the histogram
     p = histogram(x, label = false; right_margin = 15mm, hist_args...)
 
@@ -638,7 +645,13 @@ function des_plot(x, y; des_line_col = :black, des_line_width = 3, hist_args...)
     max_y = maximum(filter(!isnan, y_axis_values))
 
     # add desirability line
-    p = plot!(x, y * max_y, color = des_line_col, lw = des_line_width, label = false)
+    p = plot!(
+        x,
+        y * max_y,
+        color = des_line_col,
+        lw = des_line_width,
+        label = false,
+    )
 
     ## add second y-axis
     p = plot!(twinx(), [0, 0], label = false, ylim = (0, 1), ylabel = "Desirability")
