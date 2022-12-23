@@ -315,18 +315,18 @@ end
 
 @testset "des_plot" begin
 
-    plots = Array{Any}(missing, 2)
-    data = shuffle(data) 
-    data_missing = shuffle(data_missing)  
+    #plots = Array{Any}(missing, 2)
+    #data = shuffle(data) 
+    #data_missing = shuffle(data_missing)  
     scores = d_4pl(data; hill = 1, inflec = 10)
-    scores_missing = d_4pl(data_missing; hill = 1, inflec = 10) 
+    #scores_missing = d_4pl(data_missing; hill = 1, inflec = 10) 
     
-    plots[1] = des_plot(data, scores) 
-    plots[2] = des_plot(data_missing, scores_missing)  
+    #plots[1] = des_plot(data, scores) 
+    #plots[2] = des_plot(data_missing, scores_missing)  
     
-    for i = 1:2
-        @test typeof(plots[i]) <: Plots.plot
-    end 
+    #for i = 1:2
+    #    @test typeof(plots[i]) <: Plots.plot
+    #end 
 
     @test_throws AssertionError des_plot(['a', 'b', 'c'], scores) 
     @test_throws AssertionError des_plot(data, ['a', 'b', 'c']) 
