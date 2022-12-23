@@ -626,7 +626,7 @@ Plots a histogram and overlays the desirability scores.
 
 # Examples 
 ```julia-repl
-    x = sort(randn(1000))
+    x = randn(1000)
     y = d_high(x, -1, 1; des_min = 0.1, des_max = 0.8, scale = 2)
 
     des_plot(x, y, des_line_col = :orange1; color = :steelblue)
@@ -635,19 +635,19 @@ Plots a histogram and overlays the desirability scores.
 function des_plot(x, y; des_line_col = :black, des_line_width = 3, hist_args...)
 
     # check input values
-    skip_missing_x = collect(skipmissing(x)) 
-    skip_missing_y = collect(skipmissing(y)) 
-    @assert x isa Vector "x must be a vector" 
-    @assert y isa Vector "y must be a vector" 
-    @assert length(x) == length(y) "x and y must have equal lengths" 
-    @assert length(skip_missing_x) > 1 "x must contain more than 1 non-missing value" 
-    @assert length(skip_missing_y) > 1 "y must contain more than 1 non-missing value" 
-    @assert eltype(skip_missing_x) <: Real "Non-missing elements of x must be a subtype of Real" 
-    @assert eltype(skip_missing_y) <: Real "Non-missing elements of y must be a subtype of Real"  
+    skip_missing_x = collect(skipmissing(x))
+    skip_missing_y = collect(skipmissing(y))
+    @assert x isa Vector "x must be a vector"
+    @assert y isa Vector "y must be a vector"
+    @assert length(x) == length(y) "x and y must have equal lengths"
+    @assert length(skip_missing_x) > 1 "x must contain more than 1 non-missing value"
+    @assert length(skip_missing_y) > 1 "y must contain more than 1 non-missing value"
+    @assert eltype(skip_missing_x) <: Real "Non-missing elements of x must be a subtype of Real"
+    @assert eltype(skip_missing_y) <: Real "Non-missing elements of y must be a subtype of Real"
 
     # sort x and y appropriately 
-    y = y[sortperm(x)] 
-    x = sort(x) 
+    y = y[sortperm(x)]
+    x = sort(x)
 
     # create the histogram
     p = histogram(x, label = false; right_margin = 15mm, hist_args...)
@@ -657,20 +657,14 @@ function des_plot(x, y; des_line_col = :black, des_line_width = 3, hist_args...)
     max_y = maximum(filter(!isnan, y_axis_values))
 
     # add desirability line
-    p = plot!(
-        x,
-        y * max_y,
-        color = des_line_col,
-        lw = des_line_width,
-        label = false,
-    )
+    p = plot!(x, y * max_y, color = des_line_col, lw = des_line_width, label = false)
 
     ## add second y-axis
     p = plot!(twinx(), [0, 0], label = false, ylim = (0, 1), ylabel = "Desirability")
-    
+
     ## display and return the plot 
     display(p)
-    return(p) 
+    return (p)
 
 end
 

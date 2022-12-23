@@ -314,6 +314,7 @@ end
 end
 
 # permute indices to make sure sorting functionality works 
+# converts ranges to vectors implicitly, which is needed below 
 data = shuffle(data) 
 data_missing = shuffle(data_missing) 
 
@@ -328,13 +329,9 @@ data_missing = shuffle(data_missing)
     plots[3] = des_plot(data, scores; weights = 1:20) 
     plots[4] = des_plot(data, scores; normalize = true) 
 
-    print(typeof(plots[1]))
-    print(typeof(plots[2]))
-    print(typeof(plots[3]))
-    print(typeof(plots[4])) 
-    #for i = 1:4
-    #    @test typeof(plots[i]) <: Plots.Plot
-    #end 
+    for i = 1:4
+        @test typeof(plots[i]) <: Plots.Plot
+    end 
  
     @test_throws AssertionError des_plot(['a', 'b', 'c'], scores) 
     @test_throws AssertionError des_plot(data, ['a', 'b', 'c']) 
