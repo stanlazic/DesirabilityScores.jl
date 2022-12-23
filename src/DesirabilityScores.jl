@@ -667,7 +667,10 @@ function des_plot(x, y; des_line_col = :black, des_line_width = 3, hist_args...)
 
     ## add second y-axis
     p = plot!(twinx(), [0, 0], label = false, ylim = (0, 1), ylabel = "Desirability")
+    
+    ## display and return the plot 
     display(p)
+    return(p) 
 
 end
 
