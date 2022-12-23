@@ -315,29 +315,25 @@ end
 
 @testset "des_plot" begin
 
-    plots = Array{Any}(missing, 5)
+    plots = Array{Any}(missing, 2)
     #data = shuffle(data) 
     #data_missing = shuffle(data_missing)  
     scores = d_4pl(data; hill = 1, inflec = 10)
-    scores_missing = d_4pl(data_missing; hill = 1, inflec = 10) 
+    #scores_missing = d_4pl(data_missing; hill = 1, inflec = 10) 
     
     plots[1] = des_plot(data, scores) 
-    plots[2] = des_plot(data_missing, scores_missing) 
-    plots[3] = des_plot(tuple(data...), scores) 
-    plots[4] = des_plot(tuple(data...), tuple(scores...)) 
-    plots[5] = des_plot(data, tuple(scores...)) 
+    plots[2] = des_plot(data_missing, scores_missing)  
     
-    for i = 1:5
+    for i = 1:2
         @test typeof(plots[i]) <: Plots.plot
     end 
 
-    @test_throws AssertionError des_plot(data, scores; des_line_col = :not_a_color, des_line_width = 3) 
-    @test_throws AssertionError des_plot(data, scores; des_line_col = :blue, des_line_width = :not_a_number) 
     @test_throws AssertionError des_plot(['a', 'b', 'c'], scores) 
     @test_throws AssertionError des_plot(data, ['a', 'b', 'c']) 
     @test_throws AssertionError des_plot(data, scores[2:end]) 
-    @test_throws AssertionError des_line(data[2:end], scores) 
-    @test_throws AssertionError des_line(2,2) 
-    @test_throws AssertionError des_line([data; 'a'], [scores; 'b']) 
+    @test_throws AssertionError des_plot(data[2:end], scores) 
+    @test_throws AssertionError des_plot(2,2) 
+    @test_throws AssertionError des_plot([data; 'a'], [scores; 'b'])
+    @test_throws AssertionError des_plot(tuple(data...), tuple(scores...)) 
 
 end

@@ -633,6 +633,17 @@ Plots a histogram and overlays the desirability scores.
 """
 function des_plot(x, y; des_line_col = :black, des_line_width = 3, hist_args...)
 
+    # check input values
+    skip_missing_x = collect(skipmissing(x)) 
+    skip_missing_y = collect(skipmissing(y)) 
+    @assert x isa Vector "x must be a Vector -- not a tuple or any other container" 
+    @assert y isa Vector "y must be a Vector -- not a tuple or any other container" 
+    @assert length(x) == length(y) "x and y must have equal lengths" 
+    @assert length(skip_missing_x) > 1 "x must contain more than 1 non-missing value" 
+    @assert length(skip_missing_y) > 1 "y must contain more than 1 non-missing value" 
+    @assert eltype(skip_missing_x) <: Real "Non-missing elements of x must be a subtype of Real" 
+    @assert eltype(skip_missing_y) <: Real "Non-missing elements of y must be a subtype of Real" 
+
     # sort x and y appropriately 
     y = y[sortperm(x)] 
     x = sort(x) 
