@@ -327,7 +327,7 @@ end
     plots[4] = des_plot(tuple(data...), tuple(scores...)) 
     plots[5] = des_plot(data, tuple(scores...)) 
     
-    for i in 1:5
+    for i = 1:5
         @test typeof(plots[i]) <: Plots.plot
     end 
 
