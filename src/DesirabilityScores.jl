@@ -641,8 +641,7 @@ function des_plot(x, y; des_line_col = :black, des_line_width = 3, hist_args...)
     @assert length(skip_missing_x) > 1 "x must contain more than 1 non-missing value" 
     @assert length(skip_missing_y) > 1 "y must contain more than 1 non-missing value" 
     @assert eltype(skip_missing_x) <: Real "Non-missing elements of x must be a subtype of Real" 
-    @assert eltype(skip_missing_y) <: Real "Non-missing elements of y must be a subtype of Real" 
-    @assert !(x isa Tuple | y isa Tuple) "x and y cannot be tuples" 
+    @assert eltype(skip_missing_y) <: Real "Non-missing elements of y must be a subtype of Real"  
 
     # sort x and y appropriately 
     y = y[sortperm(x)] 

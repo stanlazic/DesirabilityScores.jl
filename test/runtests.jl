@@ -313,27 +313,33 @@ end
 
 end
 
+# permute indices to make sure sorting functionality works 
+data = shuffle(data) 
+data_missing = shuffle(data_missing) 
+
 @testset "des_plot" begin
 
-    #plots = Array{Any}(missing, 2)
-    #data = shuffle(data) 
-    #data_missing = shuffle(data_missing)  
+    plots = Array{Any}(missing, 4) 
     scores = d_4pl(data; hill = 1, inflec = 10)
-    #scores_missing = d_4pl(data_missing; hill = 1, inflec = 10) 
+    scores_missing = d_4pl(data_missing; hill = 1, inflec = 10) 
     
-    #plots[1] = des_plot(data, scores) 
-    #plots[2] = des_plot(data_missing, scores_missing)  
-    
-    #for i = 1:2
-    #    @test typeof(plots[i]) <: Plots.plot
-    #end 
+    plots[1] = des_plot(data, scores) 
+    plots[2] = des_plot(data_missing, scores_missing)  
+    plots[3] = des_plot(data, scores; weights = 1:20) 
+    plots[4] = des_plot(data, scores; normalize = true) 
 
+    for i = 1:4
+        @test typeof(plots[i]) <: Plots.plot
+    end 
+
+    @test_throws MethodError des_plot(data, scores; des_line_col = :not_a_color) 
+    @test_throws MethodError des_plot(data, scores; des_line_width = :not_a_number) 
     @test_throws AssertionError des_plot(['a', 'b', 'c'], scores) 
     @test_throws AssertionError des_plot(data, ['a', 'b', 'c']) 
     @test_throws AssertionError des_plot(data, scores[2:end]) 
     @test_throws AssertionError des_plot(data[2:end], scores) 
     @test_throws AssertionError des_plot(2,2) 
     @test_throws AssertionError des_plot([data; 'a'], [scores; 'b'])
-    @test_throws AssertionError des_plot(tuple(data...), tuple(scores...)) 
+    @test_throws MethodError des_plot(tuple(data...), tuple(scores...)) 
 
 end
