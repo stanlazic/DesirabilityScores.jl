@@ -329,17 +329,19 @@ data_missing = shuffle(data_missing)
     plots[4] = des_plot(data, scores; normalize = true) 
 
     for i = 1:4
-        @test typeof(plots[i]) <: Plots.plot
+        @test typeof(plots[i]) <: Plots.Plot
     end 
 
-    @test_throws MethodError des_plot(data, scores; des_line_col = :not_a_color) 
-    @test_throws MethodError des_plot(data, scores; des_line_width = :not_a_number) 
+    @test_throws ErrorException des_plot(data, scores; des_line_col = :not_a_color) 
+    @test_throws ErrorException des_plot(data, scores; des_line_width = :not_a_number) 
+    
     @test_throws AssertionError des_plot(['a', 'b', 'c'], scores) 
     @test_throws AssertionError des_plot(data, ['a', 'b', 'c']) 
     @test_throws AssertionError des_plot(data, scores[2:end]) 
     @test_throws AssertionError des_plot(data[2:end], scores) 
     @test_throws AssertionError des_plot(2,2) 
     @test_throws AssertionError des_plot([data; 'a'], [scores; 'b'])
-    @test_throws MethodError des_plot(tuple(data...), tuple(scores...)) 
+    @test_throws AssertionError des_plot(1:20, scores) 
+    @test_throws AssertionError des_plot(tuple(data...), tuple(scores...)) 
 
 end

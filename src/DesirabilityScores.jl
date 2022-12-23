@@ -637,6 +637,8 @@ function des_plot(x, y; des_line_col = :black, des_line_width = 3, hist_args...)
     # check input values
     skip_missing_x = collect(skipmissing(x)) 
     skip_missing_y = collect(skipmissing(y)) 
+    @assert x isa Vector "x must be a vector" 
+    @assert y isa Vector "y must be a vector" 
     @assert length(x) == length(y) "x and y must have equal lengths" 
     @assert length(skip_missing_x) > 1 "x must contain more than 1 non-missing value" 
     @assert length(skip_missing_y) > 1 "y must contain more than 1 non-missing value" 
@@ -666,6 +668,7 @@ function des_plot(x, y; des_line_col = :black, des_line_width = 3, hist_args...)
     ## add second y-axis
     p = plot!(twinx(), [0, 0], label = false, ylim = (0, 1), ylabel = "Desirability")
     display(p)
+
 end
 
 
