@@ -610,11 +610,12 @@ Plots a histogram and overlays the desirability scores.
 # Arguments
 - `x`: A non-empty vector of values to map. Non-missing elements must
   be a subtype of `Real`. Need not be sorted -- this is done before 
-  passing to the plotting function. 
+  passing to the plotting function. This also means that tuples 
+  are not acceptable (since they are immutable). 
 
 - `y`: A non-empty vector of desirability scores. Need not be sorted, 
   but must be in the proper order with respect to x (i.e., datum `x[1]` 
-  has desirability `y[1]`. 
+  has desirability `y[1]`. As with `x`, tuples are not acceptable. 
 
 - `des_line_col`: A string or symbol specifying color of the line.
 
@@ -636,13 +637,12 @@ function des_plot(x, y; des_line_col = :black, des_line_width = 3, hist_args...)
     # check input values
     skip_missing_x = collect(skipmissing(x)) 
     skip_missing_y = collect(skipmissing(y)) 
-    @assert x isa Vector "x must be a Vector -- not a tuple or any other container" 
-    @assert y isa Vector "y must be a Vector -- not a tuple or any other container" 
     @assert length(x) == length(y) "x and y must have equal lengths" 
     @assert length(skip_missing_x) > 1 "x must contain more than 1 non-missing value" 
     @assert length(skip_missing_y) > 1 "y must contain more than 1 non-missing value" 
     @assert eltype(skip_missing_x) <: Real "Non-missing elements of x must be a subtype of Real" 
     @assert eltype(skip_missing_y) <: Real "Non-missing elements of y must be a subtype of Real" 
+    @assert !(x isa Tuple | y isa Tuple) "x and y cannot be tuples" 
 
     # sort x and y appropriately 
     y = y[sortperm(x)] 
