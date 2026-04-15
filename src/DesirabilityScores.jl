@@ -3,11 +3,7 @@ module DesirabilityScores
 using StatsBase
 using Plots
 using Plots.PlotMeasures
-using Pkg.Artifacts
-using CSV
-using DataFrames
 
-export des_data
 export d_4pl
 export d_central
 export d_ends
@@ -17,43 +13,6 @@ export d_overall
 export d_rank
 export des_plot
 
-"""
-    des_data() 
-
-1000 randomly selected probesets from a breast cancer microarray
-dataset (Farmer et. al., 2005).  Returns a `DataFrames.DataFrame`,
-with 1000 observations and 7 variables.
-
-# Covariates 
-
-- `ProbeSet`: Affymetrix probesets from the U133A chip.
-
-- `GeneID`: Gene symbol.
-
-- `logFC`: Log2 fold change for the basal versus luminal comparison.
-
-- `AveExpr`: Mean expression across all samples.
-
-- `P.Value`: P-value for basal versus luminal comparison.
-
-- `SD`: Standard deviation across all samples.
-
-- `PCNA.cor`: Correlation with PCNA (a marker of proliferating cells).
-
-# Details 
-
-These data are the results from an analysis comparing the basal and
-luminal samples. The apocrine samples are excluded.
-"""
-function des_data()
-
-    farmer_path = joinpath(artifact"farmer", "farmer2005.csv")
-    farmer = CSV.read(farmer_path, DataFrame)
-    farmer = farmer[:, 2:end]
-
-    return farmer
-
-end
 
 """
     d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
