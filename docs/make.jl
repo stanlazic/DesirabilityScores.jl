@@ -1,6 +1,5 @@
 using Pkg
-Pkg.activate(".")
-Pkg.develop(PackageSpec(path=".."))
+Pkg.activate(@__DIR__)
 Pkg.instantiate()
 
 using Documenter
