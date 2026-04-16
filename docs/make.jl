@@ -1,5 +1,7 @@
 using Pkg
-Pkg.activate("..")
+Pkg.activate(".")
+Pkg.develop(PackageSpec(path=".."))
+Pkg.instantiate()
 
 using Documenter
 using DesirabilityScores
