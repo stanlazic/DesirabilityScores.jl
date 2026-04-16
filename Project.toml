@@ -1,15 +1,17 @@
 name = "DesirabilityScores"
 uuid = "4c2d0946-a3d2-4bb8-8258-3a09d0d24184"
-authors = ["Stanley E. Lazic", "Gabriel C. Phelan"]
 version = "0.1.0"
+authors = ["Stanley E. Lazic", "Gabriel C. Phelan"]
 
 [deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
+Documenter = "1.17.0"
 julia = " >= 1.10"
 
 [extras]

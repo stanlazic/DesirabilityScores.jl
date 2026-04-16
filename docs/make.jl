@@ -1,20 +1,27 @@
-using DesirabilityScores
-using Documenter
+using Pkg
+Pkg.activate("..")
 
-#DocMeta.setdocmeta!(DesirabilityScores, :DocTestSetup, :(using DesirabilityScores); recursive=true)
+using Documenter
+using DesirabilityScores
+
+DocMeta.setdocmeta!(DesirabilityScores, :DocTestSetup, :(using DesirabilityScores); recursive=true)
 
 makedocs(;
     modules=[DesirabilityScores],
     authors="Stanley E. Lazic, Gabriel C. Phelan",
-    repo="https://github.com/stanlazic/DesirabilityScores.jl/blob/{commit}{path}#{line}",
+    repo=Documenter.Remotes.GitHub("stanlazic", "DesirabilityScores.jl"), 
     sitename="DesirabilityScores.jl",
-    #format=Documenter.HTML(;
-    #    prettyurls=get(ENV, "CI", "false") == "true",
-    #    assets=String[],
-    #),
-    #format=Documenter.HTML(),
-    format=Documenter.LaTeX(), 
+    format=Documenter.HTML(;
+        canonical="https://stanlazic.github.io/DesirabilityScores.jl",
+        edit_link="master",
+        assets=String[],
+    ),
     pages=[
-        "index.md"
+        "Home" => "index.md",
     ],
+)
+
+deploydocs(;
+    repo="github.com/stanlazic/DesirabilityScores.jl",
+    devbranch="master",
 )
