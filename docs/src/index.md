@@ -10,10 +10,24 @@ The [vignette](https://cran.r-project.org/web/packages/desiR/vignettes/Gene_rank
 
 Source code available on [GitHub](https://github.com/stanlazic/DesirabilityScores.jl).
 
+### Plotting
+
+`des_plot` is available when both `DesirabilityScores` and `Plots` are loaded:
+
+```julia
+using DesirabilityScores
+using Plots
+
+x = randn(100)
+y = d_high(x, -1, 1)
+
+p = des_plot(x, y)
+```
+
 ### Exported Functions 
 
 ```@index 
-``` 
+```
 
 ```@autodocs
 Modules=[DesirabilityScores]

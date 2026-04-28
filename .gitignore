@@ -4,4 +4,5 @@
 /docs/Manifest*.toml
 /Manifest.toml
 /docs/build/
-.JuliaFormatter.toml 
+.JuliaFormatter.toml
+.codex

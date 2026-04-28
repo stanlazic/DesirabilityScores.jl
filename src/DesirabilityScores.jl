@@ -1,8 +1,6 @@
 module DesirabilityScores
 
 using StatsBase
-using Plots
-using Plots.PlotMeasures
 
 export d_4pl
 export d_central
@@ -12,6 +10,49 @@ export d_low
 export d_overall
 export d_rank
 export des_plot
+
+function des_plot end
+
+_nonmissing_values(x) = collect(skipmissing(x))
+
+_require_argument(condition, message) = condition || throw(ArgumentError(message))
+_require_domain(condition, value, message) = condition || throw(DomainError(value, message))
+
+function _require_nonempty_nonmissing(skip_missing, name)
+    _require_argument(!isempty(skip_missing), "$name must contain at least one non-missing value")
+end
+
+function _assert_real_values(skip_missing, message)
+    _require_argument(eltype(skip_missing) <: Real, message)
+end
+
+function _validate_desirability_bounds(des_min, des_max)
+    _require_domain(0 ≤ des_min ≤ 1, des_min, "des_min must be between zero and one")
+    _require_domain(0 ≤ des_max ≤ 1, des_max, "des_max must be between zero and one")
+end
+
+function _validate_scale(scale)
+    _require_domain(scale > 0, scale, "scale must be greater than zero")
+end
+
+function _init_desirability_output(x)
+    return similar(x, Union{Float64, Missing})
+end
+
+function _rescale_desirability!(y, des_min, des_max)
+    y = @. (y * (des_max - des_min)) + des_min
+    return y
+end
+
+function _map_desirability(score_value, x)
+    y = _init_desirability_output(x)
+
+    for i in eachindex(x)
+        y[i] = ismissing(x[i]) ? missing : score_value(x[i])
+    end
+
+    return y
+end
 
 
 """
@@ -73,14 +114,14 @@ julia> d_4pl(my_data; hill = 1, inflec = 5)
 ```
 
 """
-function d_4pl(x; hill, inflec, des_min = 0, des_max = 1)
+function d_4pl(x::AbstractVector; hill, inflec, des_min = 0, des_max = 1)
 
-    skip_missing = collect(skipmissing(x))
-    @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
-    @assert minimum(skip_missing) ≥ 0 "Input values must be non-negative."
-    @assert hill ≠ 0.0 "The Hill coefficient must not equal zero"
-    @assert 0 ≤ des_min ≤ 1 "des_min must be between zero and one"
-    @assert 0 ≤ des_max ≤ 1 "des_max must be between zero and one"
+    skip_missing = _nonmissing_values(x)
+    _require_nonempty_nonmissing(skip_missing, "x")
+    _assert_real_values(skip_missing, "Non-missing values must be a subtype of Real.")
+    _require_domain(minimum(skip_missing) ≥ 0, minimum(skip_missing), "Input values must be non-negative.")
+    _require_domain(hill ≠ 0.0, hill, "The Hill coefficient must not equal zero")
+    _validate_desirability_bounds(des_min, des_max)
 
     y = @. ((des_min - des_max) / (1 + ((x / inflec)^hill))) + des_max
 
@@ -137,36 +178,30 @@ julia> d_central(my_data, 0, 2, 4, 6; scale = 2)
  0.0
 ```
 """
-function d_central(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
+function d_central(x::AbstractVector, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
 
-    skip_missing = collect(skipmissing(x))
-    @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
-    @assert cut1 < cut2 "cut1 must be less than cut2"
-    @assert cut2 < cut3 "cut2 must be less than cut3"
-    @assert cut3 < cut4 "cut3 must be less than cut4"
-    @assert 0 ≤ des_min ≤ 1 "des_min must be between zero and one"
-    @assert 0 ≤ des_max ≤ 1 "des_max must be between zero and one"
-    @assert scale > 0 "scale must be greater than zero"
+    skip_missing = _nonmissing_values(x)
+    _require_nonempty_nonmissing(skip_missing, "x")
+    _assert_real_values(skip_missing, "Non-missing values must be a subtype of Real.")
+    _require_argument(cut1 < cut2, "cut1 must be less than cut2")
+    _require_argument(cut2 < cut3, "cut2 must be less than cut3")
+    _require_argument(cut3 < cut4, "cut3 must be less than cut4")
+    _validate_desirability_bounds(des_min, des_max)
+    _validate_scale(scale)
 
-    # vector to hold results
-    y = similar(x, Union{Float64, Missing})
-
-    for i in 1:size(x, 1)
-        if ismissing(x[i])
-            y[i] = missing
-        elseif x[i] ≤ cut1 || x[i] ≥ cut4
-            y[i] = 0
-        elseif cut2 ≤ x[i] ≤ cut3 #x[i] ≥ cut2 && x[i] ≤ cut3
-            y[i] = 1
-        elseif x[i] > cut1 && x[i] < cut2
-            y[i] = ((x[i] - cut1) / (cut2 - cut1))^scale
-        elseif x[i] > cut3 && x[i] < cut4
-            y[i] = ((x[i] - cut4) / (cut3 - cut4))^scale
+    y = _map_desirability(x) do xi
+        if xi ≤ cut1 || xi ≥ cut4
+            0.0
+        elseif cut2 ≤ xi ≤ cut3
+            1.0
+        elseif xi > cut1 && xi < cut2
+            ((xi - cut1) / (cut2 - cut1))^scale
+        else
+            ((xi - cut4) / (cut3 - cut4))^scale
         end
     end
 
-    # Rescale from des_min to des_max
-    y = @. (y * (des_max - des_min)) + des_min
+    y = _rescale_desirability!(y, des_min, des_max)
 
     return y
 
@@ -219,36 +254,30 @@ julia> d_ends(my_data, 0, 2, 4, 6; scale = .5)
  1.0
 ```
 """
-function d_ends(x, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
+function d_ends(x::AbstractVector, cut1, cut2, cut3, cut4; des_min = 0, des_max = 1, scale = 1)
 
-    skip_missing = collect(skipmissing(x))
-    @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
-    @assert cut1 < cut2 "cut1 must be less than cut2"
-    @assert cut2 < cut3 "cut2 must be less than cut3"
-    @assert cut3 < cut4 "cut3 must be less than cut4"
-    @assert 0 ≤ des_min ≤ 1 "des_min must be between zero and one"
-    @assert 0 ≤ des_max ≤ 1 "des_max must be between zero and one"
-    @assert scale > 0 "scale must be greater than zero"
+    skip_missing = _nonmissing_values(x)
+    _require_nonempty_nonmissing(skip_missing, "x")
+    _assert_real_values(skip_missing, "Non-missing values must be a subtype of Real.")
+    _require_argument(cut1 < cut2, "cut1 must be less than cut2")
+    _require_argument(cut2 < cut3, "cut2 must be less than cut3")
+    _require_argument(cut3 < cut4, "cut3 must be less than cut4")
+    _validate_desirability_bounds(des_min, des_max)
+    _validate_scale(scale)
 
-    # vector to hold results
-    y = similar(x, Union{Float64, Missing})
-
-    for i in 1:size(x, 1)
-        if ismissing(x[i])
-            y[i] = missing
-        elseif x[i] ≤ cut1 || x[i] ≥ cut4
-            y[i] = 1
-        elseif cut2 ≤ x[i] ≤ cut3
-            y[i] = 0
-        elseif cut1 < x[i] < cut2
-            y[i] = ((x[i] - cut2) / (cut1 - cut2))^scale
-        elseif cut3 < x[i] < cut4
-            y[i] = ((x[i] - cut3) / (cut4 - cut3))^scale
+    y = _map_desirability(x) do xi
+        if xi ≤ cut1 || xi ≥ cut4
+            1.0
+        elseif cut2 ≤ xi ≤ cut3
+            0.0
+        elseif cut1 < xi < cut2
+            ((xi - cut2) / (cut1 - cut2))^scale
+        else
+            ((xi - cut3) / (cut4 - cut3))^scale
         end
     end
 
-    # rescale:  des.min to des.max
-    y = @. (y * (des_max - des_min)) + des_min
+    y = _rescale_desirability!(y, des_min, des_max)
 
     return y
 
@@ -298,32 +327,26 @@ julia> d_high(my_data, 3,5)
  1.0
 ```
 """
-function d_high(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
+function d_high(x::AbstractVector, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
 
-    skip_missing = collect(skipmissing(x))
-    @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
-    @assert cut1 < cut2 "cut1 must be less than cut2"
-    @assert 0 ≤ des_min ≤ 1 "des_min must be between zero and one"
-    @assert 0 ≤ des_max ≤ 1 "des_max must be between zero and one"
-    @assert scale > 0 "scale must be greater than zero"
+    skip_missing = _nonmissing_values(x)
+    _require_nonempty_nonmissing(skip_missing, "x")
+    _assert_real_values(skip_missing, "Non-missing values must be a subtype of Real.")
+    _require_argument(cut1 < cut2, "cut1 must be less than cut2")
+    _validate_desirability_bounds(des_min, des_max)
+    _validate_scale(scale)
 
-    # vector to hold results
-    y = similar(x, Union{Float64, Missing})
-
-    for i in 1:size(x, 1)
-        if ismissing(x[i])
-            y[i] = missing
-        elseif x[i] < cut1
-            y[i] = 0
-        elseif x[i] > cut2
-            y[i] = 1
+    y = _map_desirability(x) do xi
+        if xi < cut1
+            0.0
+        elseif xi > cut2
+            1.0
         else
-            y[i] = ((x[i] - cut1) / (cut2 - cut1))^scale
+            ((xi - cut1) / (cut2 - cut1))^scale
         end
     end
 
-    # rescale:  des_min to des_max
-    y = @. (y * (des_max - des_min)) + des_min
+    y = _rescale_desirability!(y, des_min, des_max)
 
     return y
 
@@ -372,32 +395,26 @@ julia> d_low(my_data, 3,5; des_min = .25)
  0.25
 ```
 """
-function d_low(x, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
+function d_low(x::AbstractVector, cut1, cut2; des_min = 0, des_max = 1, scale = 1)
 
-    skip_missing = collect(skipmissing(x))
-    @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real."
-    @assert cut1 < cut2 "cut1 must be less than cut2"
-    @assert 0 ≤ des_min ≤ 1 "des_min must be between zero and one"
-    @assert 0 ≤ des_max ≤ 1 "des_max must be between zero and one"
-    @assert scale > 0 "scale must be greater than zero"
+    skip_missing = _nonmissing_values(x)
+    _require_nonempty_nonmissing(skip_missing, "x")
+    _assert_real_values(skip_missing, "Non-missing values must be a subtype of Real.")
+    _require_argument(cut1 < cut2, "cut1 must be less than cut2")
+    _validate_desirability_bounds(des_min, des_max)
+    _validate_scale(scale)
 
-    # vector to hold results
-    y = similar(x, Union{Float64, Missing})
-
-    for i in 1:size(x, 1)
-        if ismissing(x[i])
-            y[i] = missing
-        elseif x[i] < cut1
-            y[i] = 1
-        elseif x[i] > cut2
-            y[i] = 0
+    y = _map_desirability(x) do xi
+        if xi < cut1
+            1.0
+        elseif xi > cut2
+            0.0
         else
-            y[i] = ((x[i] - cut2) / (cut1 - cut2))^scale
+            ((xi - cut2) / (cut1 - cut2))^scale
         end
     end
 
-    # rescale:  des_min to des_max
-    y = @. (y * (des_max - des_min)) + des_min
+    y = _rescale_desirability!(y, des_min, des_max)
 
     return y
 
@@ -450,18 +467,18 @@ julia> d_overall(hcat(d1, d2); weights = [1, 2])
  0.8735804647362989
 ```
 """
-function d_overall(d; weights = nothing)
+function d_overall(d::AbstractMatrix; weights = nothing)
 
-    @assert d isa Matrix "First argument must be a matrix."
     skip_missing = collect(skipmissing(d))
-    @assert eltype(skip_missing) <: Real "Desirabilities must be a subtype of Real"
-    @assert 0 ≤ minimum(skip_missing) "Desirabilities must be between 0 and 1"
-    @assert maximum(skip_missing) ≤ 1 "Desirabilities must be between 0 and 1"
+    _require_nonempty_nonmissing(skip_missing, "d")
+    _require_argument(eltype(skip_missing) <: Real, "Desirabilities must be a subtype of Real")
+    _require_domain(0 ≤ minimum(skip_missing), minimum(skip_missing), "Desirabilities must be between 0 and 1")
+    _require_domain(maximum(skip_missing) ≤ 1, maximum(skip_missing), "Desirabilities must be between 0 and 1")
 
     if weights ≠ nothing
-        @assert eltype(weights) <: Real "Weights must be a subtype of Real"
-        @assert length(weights) == size(d, 2) "Must be as many weights as desirabilities"
-        @assert minimum(weights) ≥ 0 "Weights must be positive"
+        _require_argument(eltype(weights) <: Real, "Weights must be a subtype of Real")
+        _require_argument(length(weights) == size(d, 2), "Must be as many weights as desirabilities")
+        _require_domain(minimum(weights) ≥ 0, minimum(weights), "Weights must be positive")
     else
         weights = fill(1 / size(d, 2), size(d, 2))
     end
@@ -471,8 +488,17 @@ function d_overall(d; weights = nothing)
 
     for i in 1:size(d, 1)
         desire = d[i, :]
-        numer = sum(skipmissing(@. log(desire) * weights))
-        denom = sum(weights)
+        observed = .!ismissing.(desire)
+
+        if !any(observed)
+            y[i] = missing
+            continue
+        end
+
+        observed_desire = desire[observed]
+        observed_weights = weights[observed]
+        numer = sum(log.(observed_desire) .* observed_weights)
+        denom = sum(observed_weights)
         y[i] = exp(numer / denom)
     end
 
@@ -523,30 +549,32 @@ julia> d_rank(to_rank; method = :compete)
  1.0
 ``` 
 """
-function d_rank(x; low_to_high = true, method = :ordinal)
+function d_rank(x::AbstractVector; low_to_high = true, method = :ordinal)
 
-    @assert low_to_high isa Bool "low_to_high must be of type Bool."
-    @assert method in [:ordinal, :compete, :dense, :tied] "method must be one of: ordinal, compete, dense, tied"
+    _require_argument(low_to_high isa Bool, "low_to_high must be of type Bool.")
+    _require_argument(method in [:ordinal, :compete, :dense, :tied], "method must be one of: ordinal, compete, dense, tied")
     skip_missing = collect(skipmissing(x))
+    _require_nonempty_nonmissing(skip_missing, "x")
     which_missing = findall(ismissing, x)
     num_missing = length(which_missing)
-    @assert eltype(skip_missing) <: Real "Non-missing values must be a subtype of Real"
+    _require_argument(eltype(skip_missing) <: Real, "Non-missing values must be a subtype of Real")
 
     # This is necessary to handle missing values as in R
-    x[which_missing] = fill(maximum(skip_missing) + 1, num_missing)
+    ranked_input = collect(x)
+    ranked_input[which_missing] = fill(maximum(skip_missing) + 1, num_missing)
 
     # "ordinal" = "first" in R
     # "tied" = "average" in R
     # "compete" = "min" in R
     # "dense" has no equivalent in R
     if method == :ordinal
-        y = ordinalrank(x)
+        y = ordinalrank(ranked_input)
     elseif method == :compete
-        y = competerank(x)
+        y = competerank(ranked_input)
     elseif method == :dense
-        y = denserank(x)
+        y = denserank(ranked_input)
     elseif method == :tied
-        y = tiedrank(x)
+        y = tiedrank(ranked_input)
     end
 
     if low_to_high == true
@@ -560,72 +588,5 @@ function d_rank(x; low_to_high = true, method = :ordinal)
     return y
 
 end
-
-"""
-    des_plot(x, y; des_line_col = :black, des_line_width = 3, hist_args...)
-
-Plots a histogram and overlays the desirability scores.
-
-# Arguments
-- `x`: A non-empty vector of values to map. Non-missing elements must
-  be a subtype of `Real`. Need not be sorted -- this is done before 
-  passing to the plotting function. This also means that tuples 
-  are not acceptable (since they are immutable). 
-
-- `y`: A non-empty vector of desirability scores. Need not be sorted, 
-  but must be in the proper order with respect to x (i.e., datum `x[1]` 
-  has desirability `y[1]`. As with `x`, tuples are not acceptable. 
-
-- `des_line_col`: A string or symbol specifying color of the line.
-
-- `des_line_width`: An integer specifying the line width.
-
-- `hist_args...`: Additional arguments for the `Plot.jl`'s
-  `histogram()` function.
-
-# Examples 
-```julia-repl
-    x = randn(1000)
-    y = d_high(x, -1, 1; des_min = 0.1, des_max = 0.8, scale = 2)
-
-    des_plot(x, y, des_line_col = :orange1; color = :steelblue)
-```
-"""
-function des_plot(x, y; des_line_col = :black, des_line_width = 3, hist_args...)
-
-    # check input values
-    skip_missing_x = collect(skipmissing(x))
-    skip_missing_y = collect(skipmissing(y))
-    @assert x isa Vector "x must be a vector"
-    @assert y isa Vector "y must be a vector"
-    @assert length(x) == length(y) "x and y must have equal lengths"
-    @assert length(skip_missing_x) > 1 "x must contain more than 1 non-missing value"
-    @assert length(skip_missing_y) > 1 "y must contain more than 1 non-missing value"
-    @assert eltype(skip_missing_x) <: Real "Non-missing elements of x must be a subtype of Real"
-    @assert eltype(skip_missing_y) <: Real "Non-missing elements of y must be a subtype of Real"
-
-    # sort x and y appropriately 
-    y = y[sortperm(x)]
-    x = sort(x)
-
-    # create the histogram
-    p = histogram(x, label = false; right_margin = 15mm, hist_args...)
-
-    # extract the maximum y-value
-    y_axis_values = p[1][1][:y]
-    max_y = maximum(filter(!isnan, y_axis_values))
-
-    # add desirability line
-    p = plot!(x, y * max_y, color = des_line_col, lw = des_line_width, label = false)
-
-    ## add second y-axis
-    p = plot!(twinx(), [0, 0], label = false, ylim = (0, 1), ylabel = "Desirability")
-
-    ## display and return the plot 
-    display(p)
-    return (p)
-
-end
-
 
 end # end of module

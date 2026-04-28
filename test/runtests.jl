@@ -8,8 +8,10 @@ gr()
 ENV["GKSwstype"] = "100"
 
 data = 1:20
+data_vector = collect(data)
 data_missing = Array{Union{Missing,Int64}}(undef, 20)
 data_missing[2:20] = 2:20
+data_all_missing = fill(missing, 3)
 to_rank = [2, 2, 1, 0, -1, 5, 7]
 to_rank_missing = [2, 2, missing, 0, missing, 5, 7]
 
@@ -44,11 +46,14 @@ to_rank_missing = [2, 2, missing, 0, missing, 5, 7]
 
     @test test_values ≈ true_values atol = 0.001
     @test test_values_missing[1] === missing
+    @test d_4pl(view(data_vector, :); hill = 1, inflec = 10) ≈ true_values atol = 0.001
     
-    @test_throws AssertionError d_4pl([-1, 0, 3]; hill = 1, inflec = 1) 
-    @test_throws AssertionError d_4pl(data; hill = 0, inflec = 10)
-    @test_throws AssertionError d_4pl(data; hill = 1, inflec = 10, des_min = -1)
-    @test_throws AssertionError d_4pl(data; hill = 1, inflec = 10, des_max = 2)
+    @test_throws DomainError d_4pl([-1, 0, 3]; hill = 1, inflec = 1) 
+    @test_throws DomainError d_4pl(data; hill = 0, inflec = 10)
+    @test_throws DomainError d_4pl(data; hill = 1, inflec = 10, des_min = -1)
+    @test_throws DomainError d_4pl(data; hill = 1, inflec = 10, des_max = 2)
+    @test_throws ArgumentError d_4pl(Int[]; hill = 1, inflec = 10)
+    @test_throws ArgumentError d_4pl(data_all_missing; hill = 1, inflec = 10)
 
 end
 
@@ -82,13 +87,15 @@ end
 
     @test test_values ≈ true_values atol = 0.001
     @test test_values_missing[1] === missing
+    @test d_central(view(data_vector, :), 5, 10, 15, 20) ≈ true_values atol = 0.001
 
-    @test_throws AssertionError d_central(data, 10, 8, 15, 20)
-    @test_throws AssertionError d_central(data, 8, 15, 10, 20)
-    @test_throws AssertionError d_central(data, 8, 10, 20, 15)
-    @test_throws AssertionError d_central(data, 8, 10, 15, 20; scale = 0)
-    @test_throws AssertionError d_central(data, 8, 10, 15, 20; des_min = -1)
-    @test_throws AssertionError d_central(data, 8, 10, 15, 20; des_max = 2)
+    @test_throws ArgumentError d_central(data, 10, 8, 15, 20)
+    @test_throws ArgumentError d_central(data, 8, 15, 10, 20)
+    @test_throws ArgumentError d_central(data, 8, 10, 20, 15)
+    @test_throws DomainError d_central(data, 8, 10, 15, 20; scale = 0)
+    @test_throws DomainError d_central(data, 8, 10, 15, 20; des_min = -1)
+    @test_throws DomainError d_central(data, 8, 10, 15, 20; des_max = 2)
+    @test_throws ArgumentError d_central(Int[], 8, 10, 15, 20)
 
 end
 
@@ -122,13 +129,15 @@ end
 
     @test test_values ≈ true_values atol = 0.001
     @test test_values_missing[1] === missing
+    @test d_ends(view(data_vector, :), 5, 10, 15, 20) ≈ true_values atol = 0.001
 
-    @test_throws AssertionError d_ends(data, 10, 8, 15, 20)
-    @test_throws AssertionError d_ends(data, 8, 15, 10, 20)
-    @test_throws AssertionError d_ends(data, 8, 10, 20, 15)
-    @test_throws AssertionError d_ends(data, 8, 10, 15, 20; scale = 0)
-    @test_throws AssertionError d_ends(data, 8, 10, 15, 20; des_min = -1)
-    @test_throws AssertionError d_ends(data, 8, 10, 15, 20; des_max = 2)
+    @test_throws ArgumentError d_ends(data, 10, 8, 15, 20)
+    @test_throws ArgumentError d_ends(data, 8, 15, 10, 20)
+    @test_throws ArgumentError d_ends(data, 8, 10, 20, 15)
+    @test_throws DomainError d_ends(data, 8, 10, 15, 20; scale = 0)
+    @test_throws DomainError d_ends(data, 8, 10, 15, 20; des_min = -1)
+    @test_throws DomainError d_ends(data, 8, 10, 15, 20; des_max = 2)
+    @test_throws ArgumentError d_ends(Int[], 8, 10, 15, 20)
 
 end
 
@@ -163,11 +172,13 @@ end
 
     @test test_values ≈ true_values atol = 0.001
     @test test_values_missing[1] === missing
+    @test d_high(view(data_vector, :), 7.5, 12.5) ≈ true_values atol = 0.001
 
-    @test_throws AssertionError d_high(data, 12.5, 7.5)
-    @test_throws AssertionError d_high(data, 7.5, 12.5; scale = 0)
-    @test_throws AssertionError d_high(data, 7.5, 12.5; des_min = -1)
-    @test_throws AssertionError d_high(data, 7.5, 12.5; des_max = 2)
+    @test_throws ArgumentError d_high(data, 12.5, 7.5)
+    @test_throws DomainError d_high(data, 7.5, 12.5; scale = 0)
+    @test_throws DomainError d_high(data, 7.5, 12.5; des_min = -1)
+    @test_throws DomainError d_high(data, 7.5, 12.5; des_max = 2)
+    @test_throws ArgumentError d_high(Int[], 7.5, 12.5)
 
 end
 
@@ -201,11 +212,13 @@ end
 
     @test test_values ≈ true_values atol = 0.001
     @test test_values_missing[1] === missing
+    @test d_low(view(data_vector, :), 7.5, 12.5) ≈ true_values atol = 0.001
 
-    @test_throws AssertionError d_low(data, 12.5, 7.5)
-    @test_throws AssertionError d_low(data, 7.5, 12.5; scale = 0)
-    @test_throws AssertionError d_low(data, 7.5, 12.5; des_min = -1)
-    @test_throws AssertionError d_low(data, 7.5, 12.5; des_max = 2)
+    @test_throws ArgumentError d_low(data, 12.5, 7.5)
+    @test_throws DomainError d_low(data, 7.5, 12.5; scale = 0)
+    @test_throws DomainError d_low(data, 7.5, 12.5; des_min = -1)
+    @test_throws DomainError d_low(data, 7.5, 12.5; des_max = 2)
+    @test_throws ArgumentError d_low(Int[], 7.5, 12.5)
 
 end
 
@@ -217,9 +230,14 @@ end
         d_high(data, 7.5, 12.5),
         d_low(data_missing, 7.5, 12.5),
     )
+    d_partial = Union{Missing, Float64}[0.8 missing; 0.8 0.2; missing missing]
+    d_all_missing_row = Union{Missing, Float64}[0.8 0.2; missing missing; 0.6 0.3]
 
     test_values = d_overall(d; weights = [2, 1])
     test_values_missing = d_overall(d_missing)
+    test_values_partial = d_overall(d_partial)
+    test_values_partial_weighted = d_overall(d_partial; weights = [1, 2])
+    test_values_all_missing_row = d_overall(d_all_missing_row)
 
     true_values = [
         0.0000000,
@@ -269,16 +287,28 @@ end
 
     @test test_values ≈ true_values atol = 0.001
     @test test_values_missing ≈ true_values_missing atol = 0.001
+    @test test_values_partial[1] ≈ 0.8 atol = 0.001
+    @test test_values_partial[2] ≈ 0.4 atol = 0.001
+    @test test_values_partial[3] === missing
+    @test test_values_partial_weighted[1] ≈ 0.8 atol = 0.001
+    @test test_values_partial_weighted[2] ≈ exp((log(0.8) + 2 * log(0.2)) / 3) atol = 0.001
+    @test test_values_partial_weighted[3] === missing
+    @test test_values_all_missing_row[1] ≈ 0.4 atol = 0.001
+    @test test_values_all_missing_row[2] === missing
+    @test test_values_all_missing_row[3] ≈ sqrt(0.18) atol = 0.001
+    @test d_overall(view(d, :, :); weights = [2, 1]) ≈ true_values atol = 0.001
 
-    @test_throws AssertionError d_overall([1, 2])
-    @test_throws AssertionError d_overall([[1 0]; ["a" "b"]])
-    @test_throws AssertionError d_overall([[1 0]; [2 -3]])
-    @test_throws AssertionError d_overall(d; weights = [-1, 3])
+    @test_throws MethodError d_overall([1, 2])
+    @test_throws ArgumentError d_overall([[1 0]; ["a" "b"]])
+    @test_throws DomainError d_overall([[1 0]; [2 -3]])
+    @test_throws DomainError d_overall(d; weights = [-1, 3])
+    @test_throws ArgumentError d_overall(Matrix{Union{Missing, Float64}}(missing, 0, 0))
 
 end
 
 @testset "d_rank" begin
 
+    original_to_rank_missing = copy(to_rank_missing)
     test_values_ordinal = d_rank(to_rank; method = :ordinal)
     test_values_tied = d_rank(to_rank; method = :tied)
     test_values_compete = d_rank(to_rank; method = :compete)
@@ -301,10 +331,14 @@ end
     @test test_values_compete ≈ true_values_compete atol = 0.001
     @test test_values_reversed ≈ true_values_reversed atol = 0.001
     @test test_values_missing ≈ true_values_missing atol = 0.001
+    @test isequal(to_rank_missing, original_to_rank_missing)
+    @test d_rank(view(to_rank, :); method = :ordinal) ≈ true_values_ordinal atol = 0.001
 
-    @test_throws AssertionError d_rank(["a", "b", "c"])
-    @test_throws AssertionError d_rank(to_rank; low_to_high = 1)
-    @test_throws AssertionError d_rank(to_rank; method = :abc)
+    @test_throws ArgumentError d_rank(["a", "b", "c"])
+    @test_throws ArgumentError d_rank(to_rank; low_to_high = 1)
+    @test_throws ArgumentError d_rank(to_rank; method = :abc)
+    @test_throws ArgumentError d_rank(Union{Missing, Int}[])
+    @test_throws ArgumentError d_rank(data_all_missing)
 
 end
 
@@ -315,7 +349,7 @@ data_missing = shuffle(data_missing)
 
 @testset "des_plot" begin
 
-    plots = Array{Any}(missing, 4) 
+    plots = Array{Any}(missing, 5) 
     scores = d_4pl(data; hill = 1, inflec = 10)
     scores_missing = d_4pl(data_missing; hill = 1, inflec = 10) 
     
@@ -323,18 +357,19 @@ data_missing = shuffle(data_missing)
     plots[2] = des_plot(data_missing, scores_missing)  
     plots[3] = des_plot(data, scores; weights = 1:20) 
     plots[4] = des_plot(data, scores; normalize = true) 
+    plots[5] = des_plot(view(data_vector, :), scores)
 
-    for i = 1:4
+    for i = 1:5
         @test typeof(plots[i]) <: Plots.Plot
     end 
  
-    @test_throws AssertionError des_plot(['a', 'b', 'c'], scores) 
-    @test_throws AssertionError des_plot(data, ['a', 'b', 'c']) 
-    @test_throws AssertionError des_plot(data, scores[2:end]) 
-    @test_throws AssertionError des_plot(data[2:end], scores) 
-    @test_throws AssertionError des_plot(2,2) 
-    @test_throws AssertionError des_plot([data; 'a'], [scores; 'b'])
-    @test_throws AssertionError des_plot(1:20, scores) 
-    @test_throws AssertionError des_plot(tuple(data...), tuple(scores...)) 
+    @test_throws ArgumentError des_plot(['a', 'b', 'c'], scores) 
+    @test_throws ArgumentError des_plot(data, ['a', 'b', 'c']) 
+    @test_throws ArgumentError des_plot(data, scores[2:end]) 
+    @test_throws ArgumentError des_plot(data[2:end], scores) 
+    @test_throws MethodError des_plot(2,2) 
+    @test_throws ArgumentError des_plot([data; 'a'], [scores; 'b'])
+    @test_throws MethodError des_plot(tuple(data...), tuple(scores...)) 
+    @test_throws ArgumentError des_plot(Int[], Float64[])
 
 end
