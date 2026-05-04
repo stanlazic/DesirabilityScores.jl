@@ -1,6 +1,6 @@
 name = "DesirabilityScores"
 uuid = "4c2d0946-a3d2-4bb8-8258-3a09d0d24184"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Stanley E. Lazic", "Gabriel C. Phelan"]
 
 [deps]
