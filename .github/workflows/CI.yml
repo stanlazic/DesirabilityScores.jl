@@ -43,7 +43,7 @@ jobs:
         if: matrix.version == '1.12'
         with:
           directories: src,ext
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v6
         if: matrix.version == '1.12'
         with:
           files: lcov.info
