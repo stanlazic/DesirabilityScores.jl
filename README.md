@@ -4,7 +4,7 @@
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://stanlazic.github.io/DesirabilityScores.jl/stable/)
 [![Build Status](https://github.com/stanlazic/DesirabilityScores.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/stanlazic/DesirabilityScores.jl/actions/workflows/CI.yml?query=branch%3Amaster)
 [![Coverage](https://codecov.io/gh/stanlazic/DesirabilityScores.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/stanlazic/DesirabilityScores.jl)
-
+[![Aqua QA](https://juliatesting.github.io/Aqua.jl/dev/assets/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 This package is a port of the `desiR` R package ([https://cran.r-project.org/web/packages/desiR/](https://cran.r-project.org/web/packages/desiR/)). It contains functions for ranking, selecting, and integrating data. Main uses to date have been (1) prioritising genes, proteins, and metabolites from high dimensional biology experiments, (2) multivariate hit calling in high-content drug discovery screens, and (3) combining data from diverse sources.
 
