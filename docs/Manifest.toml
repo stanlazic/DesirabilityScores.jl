@@ -1,8 +1,8 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.12.5"
+julia_version = "1.12.6"
 manifest_format = "2.0"
-project_hash = "73ed2c0a96d22a69f027d31b95c8815415210fae"
+project_hash = "e2b8644ff12d9a3142cdc54287e290d403a9eb7e"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -61,7 +61,7 @@ version = "1.11.0"
 
 [[deps.DesirabilityScores]]
 deps = ["StatsBase"]
-path = ".."
+git-tree-sha1 = "46772884d759fe17a31d035ca973a83ceec0e163"
 uuid = "4c2d0946-a3d2-4bb8-8258-3a09d0d24184"
 version = "0.1.2"
 
